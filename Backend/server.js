@@ -67,11 +67,11 @@ function sortGuestNotesNewestFirst(notes) {
 
 // -------------------- DATABASE --------------------
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "charcoalnotesapp",
-  password: "charcoalpostgres",
-  port: 5432,
+  user: process.env.PGUSER,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+  port: Number(process.env.PGPORT) || 5432,
 });
 
 pool
