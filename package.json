@@ -1,9 +1,5 @@
 {
   "dependencies": {
-    "@milkdown/core": "^7.21.3",
-    "@milkdown/plugin-listener": "^7.21.3",
-    "@milkdown/preset-commonmark": "^7.21.3",
-    "@milkdown/theme-nord": "^7.21.3",
     "dotenv": "^17.4.2",
     "resend": "^6.18.1"
   }
