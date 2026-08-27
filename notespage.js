@@ -15,6 +15,11 @@ const deleteModal = document.getElementById("deleteModal");
 const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
 const deleteCancelBtn = document.getElementById("deleteCancelBtn");
 const textDiv = document.querySelector(".text-div");
+const layout = document.querySelector(".layout");
+const notesListBtn = document.getElementById("notesListBtn");
+const notesBackdrop = document.getElementById("notesBackdrop");
+const notesDrawerCloseBtn = document.getElementById("notesDrawerCloseBtn");
+const mobileNotesQuery = window.matchMedia("(max-width: 768px)");
 
 let notes = [];
 let currentNoteId = null;
@@ -124,6 +129,7 @@ function openNote(activenote) {
   createEditor(activenote.content || "");
 
   showNotes();
+  if (mobileNotesQuery.matches) closeNotesDrawer();
 }
 
 function getNoteSidebarTitle(note) {
@@ -283,24 +289,54 @@ if (deleteModal) {
   });
 }
 document.addEventListener("keydown", async (e) => {
-  if (!deleteModal || deleteModal.classList.contains("hidden")) {
+  if (deleteModal && !deleteModal.classList.contains("hidden")) {
+    if (e.key === "Escape") {
+      hideDeleteModal();
+      deleteBtn?.blur();
+    }
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      await performDelete();
+      hideDeleteModal();
+      deleteBtn?.blur();
+    }
     return;
   }
- 
-  if (e.key === "Escape") {
-    hideDeleteModal();
-    deleteBtn?.blur();
-  }
- 
-  if (e.key === "Enter") {
-    e.preventDefault(); // Prevent any default action
-    await performDelete();
-    hideDeleteModal();
-    deleteBtn?.blur();
+
+  if (e.key === "Escape" && isNotesDrawerOpen()) {
+    closeNotesDrawer();
   }
 });
  
 if (exportBtn) exportBtn.addEventListener("click", exportCurrentNote);
+
+function isNotesDrawerOpen() {
+  return layout?.classList.contains("notes-drawer-open");
+}
+
+function setNotesDrawerOpen(open) {
+  layout?.classList.toggle("notes-drawer-open", open);
+  notesListBtn?.setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function closeNotesDrawer() {
+  setNotesDrawerOpen(false);
+}
+
+function toggleNotesDrawer() {
+  setNotesDrawerOpen(!isNotesDrawerOpen());
+}
+
+if (notesListBtn) notesListBtn.addEventListener("click", toggleNotesDrawer);
+if (notesBackdrop) notesBackdrop.addEventListener("click", closeNotesDrawer);
+if (notesDrawerCloseBtn) notesDrawerCloseBtn.addEventListener("click", closeNotesDrawer);
+
+if (mobileNotesQuery.addEventListener) {
+  mobileNotesQuery.addEventListener("change", (event) => {
+    if (!event.matches) closeNotesDrawer();
+  });
+}
 
 noteTitle.addEventListener("input", () => {
   if (currentNoteId == null) return;

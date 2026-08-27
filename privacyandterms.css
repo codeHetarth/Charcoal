@@ -52,7 +52,6 @@ body {
   cursor: pointer;
 }
 
-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .logo img {
   width: 38px; height: 38px;
   object-fit: cover;      /* crops the tall photo to a square */
@@ -131,50 +130,6 @@ main a:hover {
     text-align: justify;
 }
 
-@media (max-width: 768px) {
-    html {
-      margin: 0;
-    }
-  
-    .navbar {
-      margin: 0;
-      padding: 10px 16px;
-    }
-  
-    .logo {
-      margin: 10px 0;
-    }
-  
-    .menu {
-      margin: 0;
-      padding: 0;
-      gap: 4px;
-    }
-  
-    .menu a {
-      margin: 10px 4px;
-      padding: 8px;
-      font-size: 14px;
-    }
-  
-    main {
-      padding: 100px 24px 48px;
-    }
-  
-    h2 {
-      margin: 32px 0 16px;
-    }
-  
-    p,
-    ul,
-    .last-updated,
-    .language-note {
-      margin-left: 0;
-      margin-right: 0;
-      padding-left: 0;
-    }
-  }
-
 h1 {
     font-size: 50px;    
 }
@@ -204,4 +159,190 @@ ul {
 
 ul {
     padding-left: 40px;
+}
+
+/* Extra-wide screens */
+@media (min-width: 1400px) {
+  main {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Tablets / small laptops */
+@media (max-width: 1024px) {
+  html {
+    margin: 16px;
+  }
+
+  .navbar {
+    padding: 10px 20px;
+    margin: 0;
+  }
+
+  .logo {
+    margin: 10px 16px 10px 24px;
+    gap: 12px;
+  }
+
+  .menu {
+    padding: 0 16px 10px;
+    margin: 0 24px 0 0;
+  }
+
+  .menu a {
+    margin: 8px;
+    padding: 8px;
+  }
+
+  main {
+    padding: 110px 40px 48px;
+  }
+
+  h1 {
+    font-size: 40px;
+  }
+
+  h2 {
+    margin: 40px 24px 16px;
+  }
+
+  p,
+  ul,
+  .last-updated,
+  .language-note {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+
+  .legal-footer {
+    padding: 24px 32px;
+  }
+}
+
+/* Large phones / small tablets */
+@media (max-width: 768px) {
+  html {
+    margin: 0;
+  }
+
+  .navbar {
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .logo {
+    margin: 8px 0;
+    padding: 8px 8px 8px 0;
+  }
+
+  .menu {
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+
+  .menu a {
+    margin: 4px;
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  main {
+    padding: 100px 24px 48px;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  h2 {
+    margin: 32px 0 16px;
+    font-size: 20px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  p,
+  ul,
+  .last-updated,
+  .language-note {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    font-size: 16px;
+  }
+
+  ul {
+    padding-left: 24px;
+  }
+
+  .legal-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 16px;
+  }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+  html {
+    margin: 0;
+  }
+
+  .navbar {
+    padding: 8px;
+  }
+
+  .logo {
+    gap: 8px;
+  }
+
+  .logo img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .logo span {
+    font-size: 15px;
+  }
+
+  .menu a {
+    font-size: 13px;
+    padding: 6px 8px;
+    margin: 2px;
+  }
+
+  main {
+    padding: 88px 16px 40px;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  h2 {
+    font-size: 18px;
+    margin: 24px 0 12px;
+  }
+
+  p,
+  ul,
+  .last-updated,
+  .language-note {
+    font-size: 15px;
+    text-align: left;
+  }
+
+  .legal-footer {
+    padding: 20px 12px;
+    font-size: 13px;
+  }
 }

@@ -52,7 +52,6 @@ body {
     cursor: pointer;
   }
 
-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
 .logo img {
   width: 38px; height: 38px;
   object-fit: cover;      /* crops the tall photo to a square */
@@ -396,17 +395,25 @@ logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
     margin: 40px 0;
   }
 
-  .section1-a1 {
+  .section1-a1,
+  .section3-div2-div1 a {
     display: inline-block;
+    box-sizing: border-box;
+    min-width: 240px;
     padding: 20px 40px;
     margin: 40px 0;
     background-color: #006400;
     color: #FFFFFF;
     text-decoration: none;
     border-radius: 5px;
+    text-align: center;
+    font-size: 16px;
+    line-height: 1.4;
+    white-space: nowrap;
   }
 
-  .section1-a1:hover {
+  .section1-a1:hover,
+  .section3-div2-div1 a:hover {
     background-color: #002A00;
   }
 
@@ -471,19 +478,7 @@ logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
   .section3-div2-div1 {
     display: flex;
     justify-content: space-between;
-  }
-
-  .section3-div2-div1 a {
-    padding: 20px 40px;
-    margin: 20px;
-    background-color: #006400;
-    color: #FFFFFF;
-    text-decoration: none;
-    border-radius: 5px;
-  }
-
-  .section3-div2-div1 a:hover {
-    background-color: #002A00;
+    gap: 20px;
   }
 
  /* Footer settings starts from here */
@@ -498,7 +493,7 @@ logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
   .footer-div {
     display: flex;
     flex-direction: column;
-    align-items: left;
+    align-items: flex-start;
   }
 
   .footer-div a {
@@ -511,3 +506,303 @@ logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
   .footer-div a:hover {
     color: #006400;
   }
+
+/* Extra-wide screens */
+@media (min-width: 1400px) {
+  .section,
+  .footer {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Tablets / small laptops */
+@media (max-width: 1024px) {
+  html {
+    margin: 16px;
+  }
+
+  .navbar {
+    padding: 10px 20px;
+    margin: 0;
+  }
+
+  .logo {
+    margin: 10px 16px 10px 24px;
+    gap: 12px;
+  }
+
+  .menu {
+    padding: 0 16px 10px;
+    margin: 0 24px 0 0;
+  }
+
+  .menu a {
+    margin: 8px 8px;
+    padding: 8px;
+  }
+
+  .section,
+  .footer {
+    padding: 32px 24px;
+    margin: 48px 16px;
+  }
+
+  .gap {
+    padding: 16px;
+    margin: 16px;
+  }
+
+  .section2-h1 {
+    font-size: 32px;
+    padding: 24px 0;
+    margin: 24px 0;
+  }
+
+  .section2-div2-fig-right,
+  .section2-div2-fig-left {
+    gap: 24px;
+    margin: 40px 0;
+    font-size: 18px;
+  }
+
+  .section2-div2-img {
+    width: 48%;
+  }
+
+  .section3-div2 {
+    gap: 16px;
+  }
+
+  .about-lead,
+  .about-heading,
+  .about-list,
+  .about-last,
+  .about-startbtn,
+  #accountLoggedIn,
+  #accountLoggedOut,
+  .account-personal-info,
+  .account-more {
+    margin-left: 24px;
+    margin-right: 24px;
+  }
+}
+
+/* Large phones / small tablets */
+@media (max-width: 768px) {
+  html {
+    margin: 40px;
+  }
+
+  .navbar {
+    left: 40px;
+    right: 40px;
+    width: auto;
+    margin: 0;
+    flex-wrap: wrap;
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .logo {
+    margin: 8px 0;
+    padding: 8px 8px 8px 0;
+  }
+
+  .menu {
+    margin: 0;
+    padding: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+
+  .menu a {
+    margin: 4px;
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  .section {
+    padding: 24px 16px;
+    margin: 88px 0 24px;
+  }
+
+  .footer {
+    padding: 24px 16px;
+    margin: 24px 0;
+  }
+
+  .section1-h1 {
+    padding: 16px 0 8px;
+    margin: 16px 0;
+    font-size: 28px;
+  }
+
+  .section1-a1,
+  .section3-div2-div1 a {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 16px 24px;
+    margin: 8px 0;
+    white-space: normal;
+  }
+
+  .section1-img1 {
+    width: 100%;
+    height: auto;
+  }
+
+  .section2-h1 {
+    font-size: 26px;
+    padding: 16px 0;
+    margin: 16px 0;
+  }
+
+  .section2-div2-fig-right,
+  .section2-div2-fig-left {
+    flex-direction: column;
+    text-align: left;
+    margin: 24px 0;
+    padding: 16px 0;
+    gap: 16px;
+  }
+
+  .section2-div2-img {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .section3-div2 {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section3-div2-div1 {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .about-lead,
+  .about-heading,
+  .about-list,
+  .about-last,
+  .about-startbtn,
+  #accountLoggedIn,
+  #accountLoggedOut,
+  .account-personal-info,
+  .account-more {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .about-lead,
+  .about-list,
+  .about-last {
+    font-size: 16px;
+    padding-left: 0;
+  }
+
+  .account-input {
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .acc-logout-modal-actions,
+  .acc-delete-modal-actions {
+    flex-wrap: wrap;
+  }
+}
+
+/* Phones */
+@media (max-width: 480px) {
+  html {
+    margin: 16px;
+  }
+
+  .navbar {
+    left: 16px;
+    right: 16px;
+    width: auto;
+    margin: 0;
+    padding: 8px;
+  }
+
+  .logo {
+    gap: 8px;
+  }
+
+  .logo img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .logo span {
+    font-size: 15px;
+  }
+
+  .menu a {
+    font-size: 13px;
+    padding: 6px 8px;
+    margin: 2px;
+  }
+
+  .section {
+    padding: 16px 12px;
+    margin: 80px 0 16px;
+  }
+
+  .footer {
+    padding: 16px 12px;
+    margin: 16px 0;
+  }
+
+  .gap {
+    padding: 8px;
+    margin: 8px;
+  }
+
+  .section1-h1 {
+    font-size: 22px;
+  }
+
+  .section2-h1 {
+    font-size: 22px;
+  }
+
+  .section3-div2 h1 {
+    font-size: 22px;
+  }
+
+  .footer-div a {
+    margin: 10px 0;
+  }
+
+  .acc-logout-modal-dialog,
+  .acc-delete-modal-dialog,
+  .save-modal-dialog {
+    width: calc(100% - 24px);
+    padding: 16px;
+  }
+
+  .acc-logout-modal-actions,
+  .acc-delete-modal-actions {
+    flex-direction: column;
+  }
+
+  .acc-logout-modal-btn,
+  .acc-delete-modal-btn {
+    width: 100%;
+  }
+}

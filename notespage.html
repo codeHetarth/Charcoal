@@ -39,10 +39,15 @@
                 <img src="Logo.png">
                 <span>Charcoal</span>
             </a>
-            <button class="plus-btn" id="plusBtn">+</button>
+            <div class="left-section-navbar-actions">
+              <button type="button" class="notes-drawer-close-btn" id="notesDrawerCloseBtn" aria-label="Close notes list">×</button>
+              <button type="button" class="plus-btn" id="plusBtn" aria-label="Add new note">+</button>
+            </div>
         </nav> 
         <ul class="note-list" id="noteList"></ul>
     </section>
+
+    <div class="notes-backdrop" id="notesBackdrop"></div>
         
     <section class="right-section">
         <p id="guestBanner" class="guest-banner hidden" role="status">
@@ -51,7 +56,10 @@
         </p>
 
         <nav class="right-section-navbar">
-          <button class="delete-btn" id="deleteBtn">Delete Note</button>
+          <div class="right-section-navbar-start">
+            <button type="button" class="notes-list-btn" id="notesListBtn" aria-controls="noteList" aria-expanded="false">Notes</button>
+            <button class="delete-btn" id="deleteBtn">Delete Note</button>
+          </div>
           <div class="right-section-navbar-actions">
             <button class="export-btn" id="exportBtn">Export Note</button>
             <a class="account-btn" href="/landingpage.html#account" id="accountLink">Account</a>
