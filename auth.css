@@ -1,0 +1,154 @@
+/* Basic reset */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  font-family: Arial;
+  color: #ffffff;
+  background: #121212;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.auth-section {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    display: inline-block;
+    margin: 20px 0;
+}
+
+.auth-section h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.auth-div1 {
+    text-align: center;
+    margin: 60px 20px;
+}
+
+.auth-div2 {
+    text-align: center;
+    margin: 60px 0;
+}
+
+.auth-div2 a {
+    color: #FFFFFF;
+}
+
+.auth-div2 a:hover {
+    color: #006400;
+}
+
+.auth-section form {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+    max-width: 280px;
+    margin: 0 auto;
+}
+
+.auth-section form input {
+    width: 100%;
+    font-size: 16px ;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #ffffff;
+    background: #121212;
+    color: #ffffff;
+    outline: none;
+}
+
+.auth-section button {
+    display: inline-block;
+    font-size: 16px;
+    padding: 15px 30px;
+    margin: 20px 0;
+    background-color: #006400;
+    color: #FFFFFF;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.auth-section button:hover {
+    background: #002A00;
+}
+
+.auth-div3 {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.auth-div3 p {
+    font-size: 18px;
+    color: #b3b3b3;
+}
+
+.auth-div3 a {
+    font-size: 18px;
+    color: #006400;
+    text-decoration: none;
+}
+
+.auth-div3 a:hover {
+    color: #002A00;
+}
+
+.auth-error {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 5px;
+  background: #3a1515;
+  color: #ffb4b4;
+  font-size: 14px;
+}
+
+.auth-error.hidden {
+  display: none;
+}
+
+.auth-view.hidden {
+    display: none;
+}
+
+.checkbox {
+    font-size: 14px;
+}
+
+.checkbox label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.checkbox input[type="checkbox"] {
+    width: auto;
+    margin-top: 3px;
+}
+
+.checkbox a {
+    text-decoration: underline;
+    color:#006400;
+}
+
+.checkbox a:hover {
+    color:#002A00;
+}
+

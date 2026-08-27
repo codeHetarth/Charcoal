@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notes</title>
+  <!-- Standard favicon (browser tab) -->
+  <link rel="icon" type="image/x-icon" href="/Logo/logo.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Logo/logo16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Logo/logo32x32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/Logo/logo48x48.png">
+
+  <!-- Apple touch icon (iPhone/iPad home screen) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/Logo/logo180x180.png">
+
+  <!-- Android / PWA icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="/Logo/logo192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/Logo/logo512x512.png">
+
+  <link rel="stylesheet" href="notespage.css" />
+
+  <script type="importmap">
+    {
+      "imports": {
+        "@milkdown/core": "https://esm.sh/@milkdown/core",
+        "@milkdown/preset-commonmark": "https://esm.sh/@milkdown/preset-commonmark",
+        "@milkdown/theme-nord": "https://esm.sh/@milkdown/theme-nord",
+        "@milkdown/plugin-listener": "https://esm.sh/@milkdown/plugin-listener"
+      }
+    }
+    </script>
+
+</head>
+<body>
+  <main class="layout">
+    <section class="left-section">
+        <nav class="left-section-navbar">
+            <a class="logo" href="landingpage.html" id="logoLink">
+                <img src="Logo.png">
+                <span>Charcoal</span>
+            </a>
+            <button class="plus-btn" id="plusBtn">+</button>
+        </nav> 
+        <ul class="note-list" id="noteList"></ul>
+    </section>
+        
+    <section class="right-section">
+        <p id="guestBanner" class="guest-banner hidden" role="status">
+          Guest mode — notes are temporary and disappear when you close the browser.
+          <a href="auth.html">Sign in</a> to save them to your account.
+        </p>
+
+        <nav class="right-section-navbar">
+          <button class="delete-btn" id="deleteBtn">Delete Note</button>
+          <div class="right-section-navbar-actions">
+            <button class="export-btn" id="exportBtn">Export Note</button>
+            <a class="account-btn" href="/landingpage.html#account" id="accountLink">Account</a>
+          </div>
+        </nav>
+
+        <div class="no-notes-space" id="noNotesSpace">Click to Create a New Note</div>
+        
+        <div class="text-div">
+          <input class="note-title" id="noteTitle" placeholder="Title..." />
+          <div class="text-area" id="textArea"></div>
+        </div>    
+    </section>
+  </main>
+
+  <div id="deleteModal" class="delete-modal hidden" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+    <div class="delete-modal-dialog">
+      <h2 class="delete-modal-title" id="deleteModalTitle">Delete this note?</h2>
+      <p class="delete-modal-text">This action cannot be undone.</p>
+      <p class="delete-modal-text">
+        If you click <strong>'Confirm'</strong> or press <strong>'Enter key'</strong>, your account will be permanently deleted.
+      </p>
+      <div class="delete-modal-actions">
+        <button type="button" class="delete-modal-btn delete-modal-cancel" id="deleteCancelBtn">Cancel</button>
+        <button type="button" class="delete-modal-btn delete-modal-confirm" id="deleteConfirmBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="notespage.js"></script>
+</body>
+</html>

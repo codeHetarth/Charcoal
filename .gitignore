@@ -1,0 +1,13 @@
+# dependencies
+node_modules/
+Backend/node_modules/
+
+# secrets
+.env
+Backend/.env
+*.pem
+
+# OS / editor
+.DS_Store
+.vscode/
+.pptx_deps/

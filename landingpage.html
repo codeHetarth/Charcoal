@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charcoal</title>
+  <!-- Standard favicon (browser tab) -->
+  <link rel="icon" type="image/x-icon" href="/Logo/logo.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/Logo/logo16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/Logo/logo32x32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/Logo/logo48x48.png">
+  
+  <!-- Apple touch icon (iPhone/iPad home screen) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/Logo/logo180x180.png">
+  
+  <!-- Android / PWA icons -->
+  <link rel="icon" type="image/png" sizes="192x192" href="/Logo/logo192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="/Logo/logo512x512.png">
+  <link rel="stylesheet" href="landingpage.css"> 
+</head>
+
+<body>
+  <header>
+    <nav class="navbar">
+      <!-- Left side of the navigation bar of the webpage -->
+      <div>
+        <a class="logo" id="logoLink">
+              <img src="Logo.png">
+              <span>Charcoal</span>
+        </a>
+      </div>
+      
+      <!-- Right side of the navigation bar of the webpage -->
+      <ul class="menu">
+        <li><a href="landingpage.html#about" id="aboutLink">About Us</a></li>
+        <li><a href="landingpage.html#account" id="accountLink">Account</a></li>
+      </ul>                
+    </nav>
+  </header>
+
+  <!-- Start of the main body of the Webpage-->
+  <main>
+    <!-- Section to mention Landing Page -->
+     <!-- Landing page is by default -->
+    <section id="landingPage">
+
+      <!-- Section 1 starts -->
+      <section class="section">
+        <h1 class="section1-h1">CREATE MD... NOW!!!</h1>
+        <!-- Section 1 Link 1 :- Link to the notes page -->
+        <a href="notespage.html" class="section1-a1"><b>Write Down →</b></a>  
+        <img src="/homeImages/Welcome.png" class="section1-img1" alt="Image">      
+      </section>
+      <!-- Section 1 ends -->
+
+      <!-- Section 2 starts -->
+      <section class="section">
+        <h1 class="section2-h1">WORK YOUR WAY...</h1>
+
+        <!-- Section 2 Division 1 starts-->
+        <div class="section2-div1">
+          <!-- Section 2 Division 1 Figure 1 starts -->
+          <figure class="section2-div2-fig-right">
+            <img src="/homeImages/ManageNotes.png" class="section2-div2-img" alt="Image">
+            <figcaption>
+              <h2>Manage simple Notes.</h2>
+            </figcaption>
+          </figure> 
+          <!-- Section 2 Division 1 Figure 1 ends -->
+
+          <!-- Section 2 Division 1 Figure 2 starts -->
+          <figure class="section2-div2-fig-left">
+            <img src="/homeImages/WriteNotes.png" class="section2-div2-img" alt="Image">
+            <figcaption>
+              <h2>Writes notes on Website.</h2>
+            </figcaption>
+          </figure>
+          <!-- Section 2 Division 1 Figure 2 ends -->
+      
+          <!-- Section 2 Division 1 Figure 3 starts -->
+          <figure class="section2-div2-fig-right">
+            <img src="/homeImages/ExportNotes.png" class="section2-div2-img" alt="Image">
+            <figcaption>
+              <h2>Export the Notes in md.</h2>
+            </figcaption>
+          </figure>
+          <!-- Section 2 Division 1 Figure 3 ends -->  
+        </div>
+        <!-- Section 2 Division 1 ends-->
+      </section>
+      <!-- Section 2 ends-->
+
+      <!-- Section 3 starts-->
+      <section class="section">
+
+        <div class="gap"></div>           <!-- A gap for space -->
+
+        <!-- Section 3 Division 2 starts -->
+        <div class="section3-div2">  
+          <h1>Time for MD...</h1>
+
+          <!-- Section 3 Division 2 Division 1 starts -->
+          <div class="section3-div2-div1">
+            <!-- Link to the notes page at the end of the webpage -->
+            <a href="notespage.html"><b>Start writing →</b></a>
+            <!-- Link to redirect to the registration and login page if required -->
+            <a href="#account" id="loginRegisterLink"><b>Login / Register</b></a>
+          </div>
+          <!-- Section 3 Division 2 Division 1 ends -->  
+        </div>
+        <!-- Section 3 Division 2 ends -->
+      </section>
+      <!-- Section 3 ends -->
+    </section>
+    <!-- Section for Landing Page ends -->
+
+    <!-- Section for About Page starts -->
+     <!-- CSS.Class specifies the page is hidden and only appears when user clicks -->
+    <section id="aboutPage" class="section section-hidden">
+      <h1>About Charcoal</h1>
+      <p class="about-lead">
+        Charcoal is a lightweight note-taking app built for people who think in markdown.
+        Write in the browser, keep your notes organized, and export clean <code>.md</code> files whenever you need them.
+      </p>
+
+      <h2 class="about-heading">What you can do?</h2>
+      <ul class="about-list">
+        <li><strong>Write without friction</strong> — open the editor and start typing. Titles and content save automatically as you work.</li>
+        <li><strong>Manage your notes</strong> — create, switch between, and delete notes from a simple sidebar. No clutter, no learning curve.</li>
+        <li><strong>Export to markdown</strong> — download any note as a <code>.md</code> file, ready for GitHub, documentation, or your favorite editor.</li>
+        <li><strong>Work your way</strong> — try Charcoal instantly in guest mode, or sign in to keep your notes saved to your account.</li>
+      </ul>
+
+      <h2 class="about-heading">Why Charcoal?</h2>
+      <p class="about-last">
+        Most note apps try to do everything. Charcoal does one thing well: help you capture ideas in markdown and move them wherever you need to go.
+        Whether you are drafting README files, jotting lecture notes, or keeping project docs in one place, Charcoal stays out of your way so you can focus on writing.
+      </p>
+
+      <h2 class="about-heading">How to contact us?</h2>
+      <p class="about-last">
+        Have a question, found an issue, or have a suggestion? We'd love to hear from you.
+      </p>
+      <p class="about-last">
+        You can contact us at support@yourwebsite.com, and we'll do our best to get back to you as soon as possible.
+      </p>
+
+      <div class="about-startbtn">
+        <a href="notespage.html" class="section1-a1">Start writing →</a>
+      </div>
+      <a href="landingpage.html#about" class="section1-a1" id="aboutBackToHome">Back to Home</a>
+    </section>
+    <!-- Section for About Page ends -->
+
+    <!-- Section for Account Page starts -->
+     <!-- CSS.Class specifies the page is hidden and only appears when user clicks -->
+    <section id="accountPage" class="section section-hidden">
+      <h1>Account</h1>
+      <div id="accountLoggedOut">
+        <p>You are not signed in.</p>
+        <a href="auth.html" class="section1-a1">Login / Register</a>
+      </div>
+
+      <div id="accountLoggedIn" class="account-panel-hidden">
+        <h3>Personal Information</h3>
+        <div class="account-personal-info">
+          <p><strong>Username :</strong></p>
+          <input type="text" id="accountName" class="account-input" autocomplete="name"></input>
+        </div>
+
+        <div class="account-personal-info">
+          <p><strong>Email :</strong></p>
+          <input type="text" id="accountEmail" class="account-input" autocomplete="email" 
+                required
+                pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
+                title="Enter a valid email address, e.g. name@example.com"></input>
+        </div>
+
+        <p id="saveError" class="save-error hidden"></p>
+        <button id="saveBtn" class="save-btn">Save Changes</button>
+
+        <div id="saveModal" class="save-modal">
+          <div class="save-modal-dialog">
+            <p>Your account changes have been saved successfully.</p>
+            <button id="okBtn" class="save-modal-ok-btn">OK</button>
+          </div>
+        </div>
+
+        <div class="gap"></div>
+
+        <h3>More</h3>
+        <div class="account-more">
+          <button type="button" class="account-logout-btn" id="accLogoutBtn">Log out</button>
+          <div id="accLogoutModal" class="acc-logout-modal hidden" role="dialog" aria-modal="true" aria-labelledby="accLogoutModalTitle">
+            <div class="acc-logout-modal-dialog">
+              <h2 class="acc-logout-modal-title" id="accLogoutModalTitle">Are you sure ?</h2>
+              <div class="acc-logout-modal-actions">
+                <button type="button" class="acc-logout-modal-btn acc-logout-modal-cancel" id="accLogoutCancelBtn">Cancel</button>
+                <button type="button" class="acc-logout-modal-btn acc-logout-modal-confirm" id="accLogoutConfirmBtn">Confirm</button>
+              </div>
+            </div>
+          </div>
+          
+          
+          <button type="button" class="account-delete-btn" id="accDeleteBtn">Delete Account</button>
+          <div id="accDeleteModal" class="acc-delete-modal hidden" role="dialog" aria-modal="true" aria-labelledby="accDeleteModalTitle">
+            <div class="acc-delete-modal-dialog">
+              <h2 class="acc-delete-modal-title" id="accDeleteModalTitle">Delete this Account ?</h2>
+              <p class="acc-delete-modal-text">This action cannot be undone.</p>
+              <p class="acc-delete-modal-text">
+                If you click <strong>'Confirm'</strong> or press <strong>'Enter key'</strong>, your account will be permanently deleted.
+              </p>
+              <p class="acc-delete-modal-text">
+                After your account is deleted, you will be redirected to the homepage.
+              </p>
+              <div class="acc-delete-modal-actions">
+                <button type="button" class="acc-delete-modal-btn acc-delete-modal-cancel" id="accDeleteCancelBtn">Cancel</button>
+                <button type="button" class="acc-delete-modal-btn acc-delete-modal-confirm" id="accDeleteConfirmBtn">Confirm</button>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+
+          
+      
+      </div>
+      <a href="landingpage.html#account" class="section1-a1" id="accountBackToHome">Back to Home</a>
+    </section>
+    <!-- Section for Account Page ends -->
+
+
+  <div class="gap"></div>           <!-- A gap for space -->
+
+  <footer class="footer">
+    <!-- To seperate the division on the left of the footer-->
+    <div class="footer-div">
+      <a href="privacy.html" >Privacy Policy</a>
+      <a href="terms.html" >Terms of Service</a>
+      <a href="landingpage.html#about" id="contactLink">Contact Us</a>
+    </div>
+
+    <!-- To seperate the division on the right of the footer-->
+    <div class="footer-div">
+      <p>&copy; 2026 Charcoal.</p>
+      <a href="legal.html">Legal Notice</a>
+    </div>   
+  </footer>
+
+  <script src="landingpage.js"></script>
+</body>
+</html>

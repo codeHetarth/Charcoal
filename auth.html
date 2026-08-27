@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/Register</title>
+    <link rel="stylesheet" href="auth.css">
+</head>
+<body>
+    <section class="auth-section">
+        <p id="auth-error" class="auth-error hidden" role="alert"></p>
+
+        <!-- Login -->
+        <div id="loginView" class="auth-view" action="auth.html#Login">
+            <div class="auth-div1">
+                <h1>Login to your Charcoal</h1>
+            </div>
+
+            <div class="auth-div2">
+                <form id="login-form" action="#">
+                    <input type="email" name="email" placeholder="Email Address" required autocomplete="email">
+                    <input type="password" name="password" placeholder="Password" required autocomplete="current-password">
+                    <a href="forgotpassword.html" target="_blank" rel="noopener noreferrer">
+                        Forgot Password ?
+                    </a>
+                    <button type="submit">Continue</button>
+                </form>
+            </div>
+
+            <div class="auth-div3">
+                <p>New here? <a href="#" id="show-register">Register</a></p>
+            </div>
+        </div>
+
+        <!-- Register -->
+        <div id="registerView" class="auth-view hidden">
+            <div class="auth-div1">
+                <h1>Register your Charcoal</h1>
+            </div>
+
+            <div class="auth-div2">
+                <form id="register-form" action="auth.html#Register">
+                    <input type="text" name="name" placeholder="Full Name" required autocomplete="name">
+                    <input type="email" name="email" placeholder="Email Address" required autocomplete="email">
+                    <input type="password" name="password" placeholder="New Password" required autocomplete="new-password">
+                    <input type="password" name="password_confirm" placeholder="Confirm Password" required autocomplete="new-password">
+                
+                    <div class="checkbox">
+                        <input type="checkbox" name="terms" required>
+                            <span>
+                                I agree to 
+                                <a href="terms.html" target="_blank">Terms and Conditions</a>
+                                .
+                            </span>
+                        </input>    
+                    </div>
+                    <div class="checkbox">
+                        <input type="checkbox" name="privacy" required>
+                            <span>
+                                I agree to 
+                                <a href="privacy.html" target="_blank">Privacy Policy</a>
+                                .
+                            </span>
+                        </input>    
+                    </div>
+                    
+                    <button type="submit">Create Account</button>
+
+                </form>    
+            </div>
+
+            <div class="auth-div3">
+                <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const loginView = document.getElementById("loginView");
+        const registerView = document.getElementById("registerView");
+
+        function showLogin() {
+            loginView.classList.remove("hidden");
+            registerView.classList.add("hidden");
+        }
+
+        function showRegister() {
+            loginView.classList.add("hidden");
+            registerView.classList.remove("hidden");
+        }
+
+        document.getElementById("show-login").addEventListener("click", (e) => {
+            e.preventDefault();
+            showLogin();
+            
+            // Change URL to auth.html#Login
+            window.history.replaceState(null, "", "auth.html#Login");
+        });
+
+        document.getElementById("show-register").addEventListener("click", (e) => {
+            e.preventDefault();
+            showRegister();
+
+            // Change URL to auth.html#Register
+            window.history.replaceState(null, "", "auth.html#Register");
+        });
+
+        if (window.location.hash === "#Register") {
+            showRegister();
+        }
+        else {
+            showLogin();
+        }
+
+        const authError = document.getElementById("auth-error");
+
+        function showAuthError(message) {
+            if (!authError) return;
+            authError.textContent = message;
+            authError.classList.remove("hidden");
+        }
+
+        function clearAuthError() {
+            if (!authError) return;
+            authError.textContent = "";
+            authError.classList.add("hidden");
+        }
+
+        async function postAuth(url, body) {
+            const res = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(body),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                throw new Error(data.error || "Request failed");
+            }
+            return data;
+        }
+
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            clearAuthError();
+            const form = e.target;
+            try {
+                await postAuth("/auth/login", {
+                    email: form.email.value,
+                    password: form.password.value,
+                });
+                window.location.href = "/notespage.html";
+            } catch (err) {
+                showAuthError(err.message);
+            }
+        });
+
+        document.getElementById("register-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            clearAuthError();
+            const form = e.target;
+            const password = form.password.value;
+            const confirm = form.password_confirm.value;
+            if (password !== confirm) {
+                form.password_confirm.setCustomValidity("Passwords do not match");
+                form.password_confirm.reportValidity();
+                return;
+            }
+            form.password_confirm.setCustomValidity("");
+            try {
+                await postAuth("/auth/register", {
+                    name: form.name.value,
+                    email: form.email.value,
+                    password,
+                });
+                window.location.href = "/notespage.html";
+            } catch (err) {
+                showAuthError(err.message);
+            }
+        });
+
+        document.getElementById("register-form").addEventListener("input", (e) => {
+            if (e.target.name === "password_confirm" || e.target.name === "password") {
+                e.target.form.password_confirm.setCustomValidity("");
+            }
+        });
+
+        
+    </script>
+</body>
+</html>
