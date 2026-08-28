@@ -1,14 +1,11 @@
 {
-  "name": "backend",
+  "name": "charcoal-notes",
   "version": "1.0.0",
-  "description": "",
+  "private": true,
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
