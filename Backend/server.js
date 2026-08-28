@@ -14,6 +14,7 @@ const BCRYPT_ROUNDS = 10;
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // -------------------- MIDDLEWARE --------------------
+
 app.use(
   cors({
     origin: [`http://localhost:${PORT}`, `http://127.0.0.1:${PORT}`],

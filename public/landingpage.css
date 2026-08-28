@@ -33,8 +33,9 @@ body {
     width: 100%;
     z-index: 1000;
     background: #121212;
-    padding: 10px 40px 10px;
-    margin: 0px 40px;
+    /* Match html 40px + section 100px + section padding 40px so the logo lines up with CREATE MD */
+    padding: 10px 180px 10px;
+    margin: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -45,7 +46,7 @@ body {
     display: flex;
     align-items: center;
     padding: 10px 10px 10px 0px;
-    margin: 10px 10px 10px 100px;
+    margin: 10px 10px 10px 0;
     gap: 20px;
     color: white;
     text-decoration: none;
@@ -62,8 +63,8 @@ body {
   
   /* Navbar right-part settings start from here */
   .menu {
-    padding: 0px 40px 10px;
-    margin: 0px 100px 0px 0px;
+    padding: 0 0 10px;
+    margin: 0;
     display: flex;
     list-style: none;
     align-items: center;
@@ -133,7 +134,7 @@ body {
     padding: 2px 6px;
     border-radius: 4px;
     background: #1e1e1e;
-    font-size: 0.95em;
+    font-size: 19px;
   }
 
 
@@ -395,8 +396,9 @@ body {
     margin: 40px 0;
   }
 
-  .section1-a1,
-  .section3-div2-div1 a {
+  .writeBtn,
+  .optionBtns a,
+  a.optionBtns {
     display: inline-block;
     box-sizing: border-box;
     min-width: 240px;
@@ -412,16 +414,21 @@ body {
     white-space: nowrap;
   }
 
-  .section1-a1:hover,
-  .section3-div2-div1 a:hover {
+  .writeBtn:hover,
+  .optionBtns a:hover,
+  a.optionBtns:hover {
     background-color: #002A00;
   }
 
-  .section1-img1 {
+  .home-img {
     display: block;
     text-align: center;
     max-width: 100%;
     max-height: 100%;
+    border-color: #42464b;
+    border-style: solid;
+    border-radius: 5px;
+    border-width: 2px;
   }
 
 /* Section 2 starts from here */
@@ -457,7 +464,9 @@ body {
     text-align: left;
   }
 
-  .section2-div2-img {
+  .manage-notes-img,
+  .write-notes-img,
+  .export-notes-img {
     width: 45%;
     max-width: 500px;
     height: auto;
@@ -475,7 +484,7 @@ body {
     align-items: center;
   }
 
-  .section3-div2-div1 {
+  div.optionBtns {
     display: flex;
     justify-content: space-between;
     gap: 20px;
@@ -515,6 +524,12 @@ body {
     margin-left: auto;
     margin-right: auto;
   }
+
+  /* Same left/right inset as the centered 1280px section (plus its 40px padding) */
+  .navbar {
+    padding-left: calc(max(40px, (100vw - 1280px) / 2) + 40px);
+    padding-right: calc(max(40px, (100vw - 1280px) / 2) + 40px);
+  }
 }
 
 /* Tablets / small laptops */
@@ -524,18 +539,19 @@ body {
   }
 
   .navbar {
-    padding: 10px 20px;
+    /* html 16px + section 16px + section padding 24px */
+    padding: 10px 56px;
     margin: 0;
   }
 
   .logo {
-    margin: 10px 16px 10px 24px;
+    margin: 10px 0;
     gap: 12px;
   }
 
   .menu {
-    padding: 0 16px 10px;
-    margin: 0 24px 0 0;
+    padding: 0 0 10px;
+    margin: 0;
   }
 
   .menu a {
@@ -567,7 +583,9 @@ body {
     font-size: 18px;
   }
 
-  .section2-div2-img {
+  .manage-notes-img,
+  .write-notes-img,
+  .export-notes-img {
     width: 48%;
   }
 
@@ -589,7 +607,9 @@ body {
   }
 }
 
-/* Large phones / small tablets */
+
+/* The configuration for the tablet screens */
+
 @media (max-width: 768px) {
   html {
     margin: 40px;
@@ -601,7 +621,7 @@ body {
     width: auto;
     margin: 0;
     flex-wrap: wrap;
-    padding: 8px 12px;
+    padding: 8px 16px;
     gap: 8px;
   }
 
@@ -640,10 +660,11 @@ body {
     font-size: 28px;
   }
 
-  .section1-a1,
-  .section3-div2-div1 a {
+  .writeBtn,
+  .optionBtns a,
+  a.optionBtns {
     display: block;
-    width: 100%;
+    width: calc(100% - 500px);
     box-sizing: border-box;
     text-align: center;
     padding: 16px 24px;
@@ -651,7 +672,7 @@ body {
     white-space: normal;
   }
 
-  .section1-img1 {
+  .home-img {
     width: 100%;
     height: auto;
   }
@@ -671,7 +692,9 @@ body {
     gap: 16px;
   }
 
-  .section2-div2-img {
+  .manage-notes-img,
+  .write-notes-img,
+  .export-notes-img {
     width: 100%;
     max-width: 100%;
   }
@@ -681,7 +704,7 @@ body {
     align-items: flex-start;
   }
 
-  .section3-div2-div1 {
+  div.optionBtns {
     flex-direction: column;
     width: 100%;
   }
@@ -707,10 +730,22 @@ body {
   }
 
   .about-lead,
-  .about-list,
   .about-last {
     font-size: 16px;
     padding-left: 0;
+  }
+
+  .about-list {
+    font-size: 16px;
+    padding-left: 24px;
+  }
+
+  .about-list li {
+    font-size: 16px;
+  }
+
+  .about-heading {
+    font-size: 18px;
   }
 
   .account-input {
@@ -719,13 +754,19 @@ body {
     margin-right: 0;
   }
 
+  .account-personal-info {
+    width: calc(100% - 200px);
+  }
+
   .acc-logout-modal-actions,
   .acc-delete-modal-actions {
     flex-wrap: wrap;
   }
 }
 
-/* Phones */
+
+/* The configuration for the smallest screens */
+
 @media (max-width: 480px) {
   html {
     margin: 16px;
@@ -736,7 +777,7 @@ body {
     right: 16px;
     width: auto;
     margin: 0;
-    padding: 8px;
+    padding: 8px 12px;
   }
 
   .logo {
@@ -763,9 +804,16 @@ body {
     margin: 80px 0 16px;
   }
 
-  .footer {
-    padding: 16px 12px;
-    margin: 16px 0;
+  .writeBtn,
+  .optionBtns a,
+  a.optionBtns {
+    display: block;
+    min-width: 170px;
+    box-sizing: border-box;
+    text-align: center;
+    padding: 16px 24px;
+    margin: 8px 0;
+    white-space: normal;
   }
 
   .gap {
@@ -785,14 +833,14 @@ body {
     font-size: 22px;
   }
 
-  .footer-div a {
-    margin: 10px 0;
+  .account-personal-info {
+    width: calc(100% - 150px);
   }
 
   .acc-logout-modal-dialog,
   .acc-delete-modal-dialog,
   .save-modal-dialog {
-    width: calc(100% - 24px);
+    width: calc(100% - 200px);
     padding: 16px;
   }
 
@@ -805,4 +853,14 @@ body {
   .acc-delete-modal-btn {
     width: 100%;
   }
+
+  .footer {
+    padding: 16px 12px;
+    margin: 16px 0;
+  }
+
+  .footer-div a {
+    padding: 0;
+    margin: 10px 0;
+  }  
 }
