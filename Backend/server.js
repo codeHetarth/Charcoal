@@ -336,8 +336,8 @@ app.delete("/notes/:id", async (req, res) => {
   }
 });
 
-// Serve frontend files from project root (after API routes)
-const publicRoot = path.resolve(__dirname, "..");
+// Serve frontend files from public/ only (never Backend/, .env, or node_modules)
+const publicRoot = path.resolve(__dirname, "..", "public");
 app.use(express.static(publicRoot));
 
 // -------------------- Account Routes --------------------
