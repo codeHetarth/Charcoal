@@ -1,9 +1,5 @@
 {
   "scripts": {
     "start": "node Backend/server.js"
-  },
-  "dependencies": {
-    "dotenv": "^17.4.2",
-    "resend": "^6.18.1"
   }
 }
