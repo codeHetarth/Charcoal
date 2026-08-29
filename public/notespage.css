@@ -250,6 +250,20 @@ body {
   box-shadow: none;
 }
 
+.milkdown a {
+  color: #58a6ff;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.milkdown a:hover {
+  color: #79c0ff;
+}
+
+.milkdown a:visited {
+  color: #58a6ff;
+}
+
 .milkdown code:not(pre code) {
   background: #2a2a2a;
   color: #e6e6e6;
@@ -257,6 +271,102 @@ body {
   font-size: 18px;
   padding: 2px 6px;
   border-radius: 5px;
+}
+
+.milkdown .tableWrapper,
+.milkdown [data-label="table"] {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.milkdown table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 240px;
+}
+
+.milkdown th,
+.milkdown td {
+  border: 1px solid #444;
+  padding: 8px 12px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.milkdown th {
+  background: #2a2a2a;
+  font-weight: 600;
+}
+
+.milkdown tr:nth-child(even) td {
+  background: #1a1a1a;
+}
+
+.milkdown pre {
+  background: #1e1e1e;
+  padding: 12px 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 1em 0;
+}
+
+.milkdown pre code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 15px;
+  color: #d8dee9;
+}
+
+.milkdown .token.comment,
+.milkdown .token.prolog,
+.milkdown .token.doctype,
+.milkdown .token.cdata {
+  color: #616e88;
+}
+
+.milkdown .token.punctuation {
+  color: #81a1c1;
+}
+
+.milkdown .token.property,
+.milkdown .token.tag,
+.milkdown .token.constant,
+.milkdown .token.symbol,
+.milkdown .token.deleted {
+  color: #81a1c1;
+}
+
+.milkdown .token.boolean,
+.milkdown .token.number {
+  color: #b48ead;
+}
+
+.milkdown .token.selector,
+.milkdown .token.attr-name,
+.milkdown .token.string,
+.milkdown .token.char,
+.milkdown .token.builtin,
+.milkdown .token.inserted {
+  color: #a3be8c;
+}
+
+.milkdown .token.operator,
+.milkdown .token.entity,
+.milkdown .token.url,
+.milkdown .token.variable {
+  color: #88c0d0;
+}
+
+.milkdown .token.atrule,
+.milkdown .token.attr-value,
+.milkdown .token.function,
+.milkdown .token.class-name {
+  color: #8fbcbb;
+}
+
+.milkdown .token.keyword {
+  color: #81a1c1;
 }
 
 .delete-modal {
