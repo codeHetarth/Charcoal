@@ -37,7 +37,7 @@
 
   <main>
     <h1>Privacy Policy</h1>
-    <p class="last-updated"><b>Last updated: 13 August 2026</b></p>
+    <p class="last-updated"><b>Last updated: 29 August 2026</b></p>
     <p class="language-note">
       <b>
         If this Privacy Policy is translated into another language, the English version will apply
@@ -50,7 +50,8 @@
       Welcome to Charcoal. This Privacy Policy explains how information is collected, used, stored, and protected when you use this web application.
     </p>
     <p>
-      Charcoal is a note-taking web application that allows users to create and manage personal notes through an online interface.
+      Charcoal is a markdown note-taking web application. You can write notes in the browser, organise them in a sidebar,
+      export them as <code>.md</code> files, try the app as a guest, or create an account so notes are saved to your profile.
     </p>
 
     <h2>2. Data Controller</h2>
@@ -73,17 +74,21 @@
       When you use Charcoal, we may collect the following information:
     </p>
     <ul>
-      <li>Name</li>
+      <li>Name (shown as your username in Account)</li>
       <li>Email address</li>
-      <li>Password, stored in a securely hashed form</li>
-      <li>Notes and other content created by you</li>
-      <li>Information necessary to operate and maintain your account</li>
-      <li>Session information necessary to keep you securely logged in</li>
+      <li>Password, stored in a securely hashed form (bcrypt). We never store your password as plain text.</li>
+      <li>Notes you create (title and markdown content), including any links or other text you type or paste</li>
+      <li>Hashed password-reset tokens and their expiry time, when you request a reset</li>
+      <li>Session information necessary to keep you logged in or to hold guest notes</li>
     </ul>
     <p>
       If you use guest mode without creating an account, your notes are stored temporarily in a session on the server
       and are associated with your browser session. Guest notes are not saved to a user account and are removed when
       the session ends or the browser is closed.
+    </p>
+    <p>
+      If you create an account, your name, email, hashed password, and notes are stored in the application database
+      and are auto-saved as you edit.
     </p>
     <p>
       We only collect information that is necessary to provide and operate the application's functionality.
@@ -105,10 +110,11 @@
       The information we collect may be used to:
     </p>
     <ul>
-      <li>Create and manage your user account</li>
-      <li>Authenticate your login</li>
-      <li>Save and retrieve your notes</li>
-      <li>Provide account-related features such as password recovery</li>
+      <li>Create and manage your user account, including updating your name and email</li>
+      <li>Authenticate your login and keep you signed in</li>
+      <li>Save, retrieve, update, and delete your notes</li>
+      <li>Let you export a note as a markdown file on your own device (this download happens in your browser)</li>
+      <li>Send transactional emails: a welcome email after registration, a password-reset email, and a confirmation after account deletion</li>
       <li>Maintain and improve the functionality of the application</li>
       <li>Protect the security of the application</li>
     </ul>
@@ -152,15 +158,25 @@
       We do not sell your personal information or intentionally share it with third parties for advertising or marketing purposes.
     </p>
     <p>
-      To provide certain account-related features, some information may be
+      To provide certain features, some information may be
       processed by third-party service providers that operate essential parts of the application.
     </p>
     <p>
       Charcoal uses <b>Resend</b> as an email delivery service to send transactional emails,
-      including account registration emails, password recovery emails, and account deletion confirmation emails.
-      Information such as your email address and the content necessary to send these emails may be processed by Resend for this purpose.
+      including welcome emails after registration, password-reset emails, and account-deletion confirmation emails.
+      Information such as your name, email address, and the content necessary to send these emails may be processed by Resend for this purpose.
       Resend may process data in the United States or other countries outside the EEA.
       Where required, such transfers are subject to appropriate safeguards under applicable data protection law.
+    </p>
+    <p>
+      The notes editor loads open-source editor scripts (Milkdown and related packages) from the
+      <b>esm.sh</b> content delivery network when you open the notes page.
+      Your browser may send a request to that network (which can include your IP address and browser information)
+      in order to download those scripts. Charcoal does not send your notes or account details to esm.sh.
+    </p>
+    <p>
+      If you put a link in a note and click it, your browser opens that third-party website.
+      Those sites have their own privacy practices. Charcoal does not control them.
     </p>
     <p>
       These services are used to operate the application and are not used by Charcoal for advertising or personalised marketing.
@@ -207,8 +223,10 @@
       the application's functionality or as required by applicable legal obligations.
     </p>
     <p>
-      When an account is deleted, associated account information and notes may also be deleted,
-      subject to any applicable legal retention requirements.
+      When you delete your account from the Account page, your account record and notes are deleted
+      from the database, and your session is ended. A confirmation email may still be sent to the
+      address on the account. Password-reset tokens are stored only until they expire (15 minutes)
+      or are replaced by a new request.
     </p>
     <p>
       Guest-mode notes are retained only for the duration of your browser session.
@@ -229,7 +247,7 @@
       For rules on using the service, see our <a href="terms.html">Terms of Service</a>.
     </p>
 
-    <p class="last-updated"><b>Last updated: 13 August 2026</b></p>
+    <p class="last-updated"><b>Last updated: 29 August 2026</b></p>
   </main>
 
   <footer class="legal-footer">

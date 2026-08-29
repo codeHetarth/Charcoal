@@ -4,17 +4,22 @@ Charcoal is a lightweight markdown note-taking app. Write in the browser, manage
 
 ## Features
 
-- **Markdown editor** — [Milkdown](https://milkdown.dev/) with CommonMark and auto-save
+- **Markdown editor** — [Milkdown](https://milkdown.dev/) with GitHub Flavored Markdown (headings, lists, tables, task lists, strikethrough, code blocks, and syntax highlighting)
+- **Links** — type or paste `[text](https://example.com)` (or a bare URL) to create a clickable link; click opens it in a new tab
+- **Auto-save** — title and content save as you type
+- **Note sidebar** — create, switch, and delete notes; on small screens the list opens as a drawer
 - **Guest mode** — notes live in the browser session (until the browser is closed)
-- **Accounts** — register, log in, update profile, and delete your account
+- **Accounts** — register, log in, update name and email, log out, and delete your account
+- **Transactional email** — welcome, password-reset, and account-deletion emails via [Resend](https://resend.com/)
 - **Password reset** — email link (expires in 15 minutes)
-- **Export** — download the current note as a markdown file
+- **Export** — download the current note as a markdown file in the browser
 
 ## Tech stack
 
 | Layer | Stack |
 | --- | --- |
 | Frontend | HTML, CSS, vanilla JavaScript (`public/`) |
+| Editor | Milkdown 7 (loaded from [esm.sh](https://esm.sh/) on the notes page) |
 | Backend | Node.js, Express |
 | Database | PostgreSQL |
 | Auth | express-session, bcrypt |
@@ -23,7 +28,7 @@ Charcoal is a lightweight markdown note-taking app. Write in the browser, manage
 ## Project structure
 
 ```
-Port Pro/
+Charcoal/
 ├── Backend/
 │   ├── server.js          # Express API and static file server
 │   ├── package.json
@@ -34,11 +39,11 @@ Port Pro/
 
 Pages:
 
-- `/` → landing page
+- `/` → `/landingpage.html` — landing page (About and Account sections)
 - `/notespage.html` — editor
 - `/auth.html` — login / register
 - `/forgotpassword.html` and `/resetpassword.html` — password reset
-- `/privacy.html`, `/terms.html`, `/legal.html` — legal pages
+- `/privacy.html`, `/terms.html`, `/legal.html` — legal document pages
 
 ## Prerequisites
 
@@ -122,6 +127,13 @@ PORT=3010 node server.js
 ```
 
 Do not open the HTML files with `file://` — the notes page talks to the API over HTTP.
+
+## How the editor works
+
+- Notes use markdown. GitHub Flavored Markdown is supported (tables, task lists, strikethrough, fenced code blocks).
+- A markdown link such as `[Resend](https://resend.com/)` becomes a clickable **Resend** link. Clicking it opens the URL in a new tab.
+- Enter, Arrow Down, or Arrow Right at the end of a code block moves the cursor to a new line below the block.
+- Export builds a `.md` file in the browser and downloads it. Nothing is uploaded for export.
 
 ## API overview
 
