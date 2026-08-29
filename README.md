@@ -162,6 +162,10 @@ Authenticated requests send the session cookie (`credentials: include`).
 
 Notes for signed-in users are stored in PostgreSQL, whereas, the guest notes are stored on the session and use negative identifiers.
 
+## Documents
+
+The application publishes three legal pages, linked from the landing-page footer and from one another. The documents describe how Charcoal actually operates through guest sessions, account storage, auto-save, export, Resend emails, and links in notes. The English text applies if a translation differs. Last updated: 29 August 2026.
+
 ## Licence
 
 Private university project.
