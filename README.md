@@ -1,67 +1,65 @@
 # Charcoal
 
-Charcoal is a lightweight markdown note-taking app. Write in the browser, manage notes from a sidebar, and export them as `.md` files. You can try it instantly as a guest, or sign in so notes are saved to your account.
+Charcoal is a browser-based markdown note application developed as part of a university web development project. Users can write notes in the editor, organise them from a sidebar, and export a note as a `.md` file.
 
-## Features
+## Functionality
 
-- **Markdown editor** — [Milkdown](https://milkdown.dev/) with GitHub Flavored Markdown (headings, lists, tables, task lists, strikethrough, code blocks, and syntax highlighting)
-- **Links** — type or paste `[text](https://example.com)` (or a bare URL) to create a clickable link; click opens it in a new tab
-- **Auto-save** — title and content save as you type
-- **Note sidebar** — create, switch, and delete notes; on small screens the list opens as a drawer
-- **Guest mode** — notes live in the browser session (until the browser is closed)
-- **Accounts** — register, log in, update name and email, log out, and delete your account
-- **Transactional email** — welcome, password-reset, and account-deletion emails via [Resend](https://resend.com/)
-- **Password reset** — email link (expires in 15 minutes)
-- **Export** — download the current note as a markdown file in the browser
+Charcoal provides a guest mode to store notes temporarily, only for the current browser session; they are discarded when the browser is closed. Instead, to store notes permanently, users can register with an account(email and password) and keep their notes in the database, attached to their account.
 
-## Tech stack
+The navbar on the home page provides direction to the About section of the web application and Account section to show and change user details. In addition, the footer provides contact details and documents, namely- Privacy policy, Terms of service, and Legal notice for Charcoal related information.
 
-| Layer | Stack |
-| --- | --- |
-| Frontend | HTML, CSS, vanilla JavaScript (`public/`) |
-| Editor | Milkdown 7 (loaded from [esm.sh](https://esm.sh/) on the notes page) |
-| Backend | Node.js, Express |
-| Database | PostgreSQL |
-| Auth | express-session, bcrypt |
-| Email | [Resend](https://resend.com/) |
+The notes editor is built with [Milkdown](https://milkdown.dev/) editor and supports GitHub Flavored Markdown plugins. The plugins includes headings, lists, tables, task lists, strikethrough, url links, and fenced code blocks, with syntax highlighting inside code blocks. Moreover, changes to the title and the note body are saved automatically.
+
+The notes sidebar is used to create and select note. Whereas, on narrow viewports a drawer is provided to perform the operations. The navbar on the notepage enables user to delete and export notes, with redirection button to user Accounts page. On exporting notes the browser generates markdown file and downloads it locally. Thus, the file is not uploaded to the server.
+
+Account features include registration, login, profile updates (name and email), logout and account deletion operations. An account deletion also removes the associated notes. 
+
+If a [Resend](https://resend.com/) API key is configured, the application can send emails for event such as welcome, password reset, and deletion confirmation. Further, Password reset is followed by a link via an email; the link expires after 15 minutes. 
+
+## Implementation
+
+The frontend is written in HTML, CSS and JavaScript.
+The server is Node.js with Express. 
+PostgreSQL database stores users and notes. 
+Sessions are handled with express-session. 
+Passwords are stored as bcrypt hashes.
+Milkdown 7 is loaded from [esm.sh](https://esm.sh/) when the notes page is opened.
 
 ## Project structure
 
 ```
 Charcoal/
 ├── Backend/
-│   ├── server.js          # Express API and static file server
+│   ├── server.js          # HTTP API and static file server
 │   ├── package.json
-│   └── .env.example       # copy to .env and fill in values
+│   └── .env.example       # copy to .env
 ├── public/                # pages, styles, scripts, images
 └── README.md
 ```
 
-Pages:
+Routes:
 
-- `/` → `/landingpage.html` — landing page (About and Account sections)
-- `/notespage.html` — editor
-- `/auth.html` — login / register
-- `/forgotpassword.html` and `/resetpassword.html` — password reset
-- `/privacy.html`, `/terms.html`, `/legal.html` — legal document pages
+- `/` -> `landingpage.html` — landing page
+- `/notespage.html` — notes editor
+- `/auth.html` — login / registration
+- `/forgotpassword.html`, `/resetpassword.html` — password reset
+- `/privacy.html`, `/terms.html`, `/legal.html` — legal documents
 
-## Prerequisites
+## Requirements
 
-- [Node.js](https://nodejs.org/) (v18 or later recommended)
-- [PostgreSQL](https://www.postgresql.org/) running locally
+- Node.js 18 or later
+- PostgreSQL running locally
 
 ## Setup
 
-### 1. Install dependencies
+From `Backend/`:
 
 ```bash
 cd Backend
 npm install
 ```
 
-### 2. Configure environment
-
-Copy `Backend/.env.example` to `Backend/.env` and fill in your values:
+Copy `Backend/.env.example` as `Backend/.env` and set the following values.
 
 ```
 PORT=3000
@@ -76,9 +74,7 @@ PGPORT=5432
 RESEND_API_KEY=
 ```
 
-`RESEND_API_KEY` is required for welcome, account-deletion, and password-reset emails. Without it, those emails will fail (the rest of the app still works).
-
-### 3. Create the database
+`RESEND_API_KEY` is required for the welcome, password-reset and account-deletion emails. If the KEY configuration is omitted, the email service will fail; but the rest of the application will run as programmed.
 
 In PostgreSQL:
 
@@ -86,7 +82,7 @@ In PostgreSQL:
 CREATE DATABASE charcoalnotesapp;
 ```
 
-Then connect to that database and create the tables:
+Then create the tables:
 
 ```sql
 CREATE TABLE users (
@@ -110,15 +106,13 @@ CREATE TABLE password_reset_tokens (
 );
 ```
 
-### 4. Start the server
-
-From the `Backend/` folder:
+Start the server from `Backend/`:
 
 ```bash
 npm start
 ```
 
-Open [http://localhost:3000/](http://localhost:3000/). The server serves files from `public/` and exposes the API on the same origin.
+This runs `node server.js`. Open [http://localhost:3000/](http://localhost:3000/). Static pages and the API are served from the same origin.
 
 If port 3000 is already in use:
 
@@ -126,31 +120,32 @@ If port 3000 is already in use:
 PORT=3010 node server.js
 ```
 
-Do not open the HTML files with `file://` — the notes page talks to the API over HTTP.
+The HTML files should not be opened via `file://`. The notes page calls the API over HTTP and therefore depends on the running server. Thereby, running from files will result in failure to process API related operations.
 
-## How the editor works
+## Editor behaviour
 
-- Notes use markdown. GitHub Flavored Markdown is supported (tables, task lists, strikethrough, fenced code blocks).
-- A markdown link such as `[Resend](https://resend.com/)` becomes a clickable **Resend** link. Clicking it opens the URL in a new tab.
-- Enter, Arrow Down, or Arrow Right at the end of a code block moves the cursor to a new line below the block.
-- Export builds a `.md` file in the browser and downloads it. Nothing is uploaded for export.
+GitHub Flavored Markdown is enabled, this includes tables, task lists, strikethrough, and code blocks.
 
-## API overview
+The users can use Markdown related syntax to write their notes in the web application.
 
-All requests that need a login use the session cookie (`credentials: include`).
+Note:- Currently, the development supports essential plugins to create, write, and manage notes. However, more plugins will be installed later upon further testing and feedbacks.
 
-### Auth
+## API
+
+Authenticated requests send the session cookie (`credentials: include`).
+
+### Authentication
 
 | Method | Path | Description |
 | --- | --- | --- |
-| `POST` | `/auth/register` | Create account and sign in |
+| `POST` | `/auth/register` | Create an account and sign in |
 | `POST` | `/auth/login` | Sign in |
 | `POST` | `/auth/logout` | Sign out |
 | `GET` | `/auth/me` | Current user |
 | `PUT` | `/auth/me` | Update name and email |
-| `DELETE` | `/auth/me` | Delete account and notes |
-| `POST` | `/auth/forgot-password` | Send reset email |
-| `GET` | `/auth/verify-reset-token` | Check reset token |
+| `DELETE` | `/auth/me` | Delete the account and its notes |
+| `POST` | `/auth/forgot-password` | Request a reset email |
+| `GET` | `/auth/verify-reset-token` | Validate a reset token |
 | `POST` | `/auth/reset-password` | Set a new password |
 
 ### Notes
@@ -163,14 +158,8 @@ All requests that need a login use the session cookie (`credentials: include`).
 | `PUT` | `/notes/:id` | Update a note |
 | `DELETE` | `/notes/:id` | Delete a note |
 
-Logged-in notes are stored in PostgreSQL. Guest notes are stored in the session and use negative IDs.
+Notes for signed-in users are stored in PostgreSQL, whereas, the guest notes are stored on the session and use negative identifiers.
 
-## Scripts
-
-| Command | Description |
-| --- | --- |
-| `npm start` | Run `node server.js` |
-
-## License
+## Licence
 
 Private university project.
