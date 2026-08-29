@@ -128,6 +128,8 @@ GitHub Flavored Markdown is enabled, this includes tables, task lists, strikethr
 
 The users can use Markdown related syntax to write their notes in the web application.
 
+In the notes, the Title area is used for presenting Title on the sidebar and the same Title will be used to name the notes when exported. Therefore, a user can write Heading(#) seperately in the notes editor.  
+
 Note:- Currently, the development supports essential plugins to create, write, and manage notes. However, more plugins will be installed later upon further testing and feedbacks.
 
 ## API
