@@ -1,3 +1,4 @@
+// Milkdown editor core, CommonMark/GFM presets, theme, and supporting plugins.
 import { Editor, rootCtx, defaultValueCtx, editorViewCtx, editorViewOptionsCtx } from "@milkdown/core";
 import { commonmark, linkSchema } from "@milkdown/preset-commonmark";
 import { gfm } from "@milkdown/preset-gfm";
@@ -10,6 +11,7 @@ import { $prose } from "@milkdown/utils";
 import { Plugin, PluginKey, TextSelection } from "@milkdown/prose/state";
 
 
+// References for the sidebar, editor surface, deletion dialogue, and mobile drawer.
 const plusBtn = document.getElementById("plusBtn");
 const noNotesSpace = document.getElementById("noNotesSpace");
 const noteList = document.getElementById("noteList");
@@ -27,14 +29,17 @@ const notesBackdrop = document.getElementById("notesBackdrop");
 const notesDrawerCloseBtn = document.getElementById("notesDrawerCloseBtn");
 const mobileNotesQuery = window.matchMedia("(max-width: 768px)");
 
+// In-memory collection of notes, the identifier of the open note, and the editor instance.
 let notes = [];
 let currentNoteId = null;
 let milkdownEditor = null;
 
+// Debounce handle so successive keystrokes result in a single persistence request.
 let saveTimeout = null;
 
 const guestBanner = document.getElementById("guestBanner");
 
+// Issues a fetch that always includes session credentials (cookies). //
 const apiFetch = (url, options = {}) =>
   fetch(url, { credentials: "include", ...options });
 
@@ -44,6 +49,7 @@ if (textAreaMount) {
   });
 }
 
+// Opens an in-editor hyperlink in a new browsing context, if the target is a valid URL. //
 function openEditorLink(event) {
   const target = event.target;
   if (!(target instanceof Element)) return false;
@@ -60,6 +66,7 @@ function openEditorLink(event) {
   return true;
 }
 
+// Returns true when the href uses http, https, or mailto. //
 function isLinkHref(href) {
   if (!href) return false;
   try {
@@ -70,6 +77,10 @@ function isLinkHref(href) {
   }
 }
 
+/**
+ * Normalises stored markdown: repairs escaped link syntax and discards
+ * an otherwise empty fenced code block that would otherwise pollute the editor.
+ */
 function normalizeNoteContent(content) {
   if (!content) return "";
   let next = content.replace(
@@ -82,32 +93,38 @@ function normalizeNoteContent(content) {
   return next;
 }
 
+// Schema mark used for hyperlinks, if the document schema defines one. //
 function getLinkType(state) {
   return state.schema.marks.link || null;
 }
 
+// True when the typing cursor currently lies within a link mark. //
 function isInsideLink(state) {
   const linkType = getLinkType(state);
   if (!linkType) return false;
   return !!linkType.isInSet(state.storedMarks || state.selection.$from.marks());
 }
 
+// True when the selection resides inside a fenced code block. //
 function isInCodeBlock(state) {
   return state.selection.$from.parent.type.name === "code_block";
 }
 
+// True when the typing cursor is on the final line of a code block (used to leave the block). //
 function isOnLastLineOfCodeBlock(state) {
   const { $from, empty } = state.selection;
   if (!empty || !isInCodeBlock(state)) return false;
   return !$from.parent.textContent.slice($from.parentOffset).includes("\n");
 }
 
+// True when the typing cursor sits at the end of the code-block content. //
 function isAtEndOfCodeBlock(state) {
   const { $from, empty } = state.selection;
   if (!empty || !isInCodeBlock(state)) return false;
   return $from.parentOffset === $from.parent.content.size;
 }
 
+// True when the last line of the current code block contains no text. //
 function lastLineOfCodeBlockIsEmpty(state) {
   if (!isInCodeBlock(state)) return false;
   const text = state.selection.$from.parent.textContent;
@@ -115,6 +132,7 @@ function lastLineOfCodeBlockIsEmpty(state) {
   return (lastBreak === -1 ? text : text.slice(lastBreak + 1)) === "";
 }
 
+// Places the typing cursor in a paragraph immediately after the current block, creating one if needed. //
 function insertParagraphAfterBlock(view) {
   const { state } = view;
   const $from = state.selection.$from;
@@ -136,6 +154,7 @@ function insertParagraphAfterBlock(view) {
   return true;
 }
 
+// True when the typing cursor is at the trailing edge of a link (so further typing should not extend it). //
 function isAtEndOfLink(state) {
   const { $from, empty } = state.selection;
   if (!empty || !isInsideLink(state)) return false;
@@ -145,14 +164,21 @@ function isAtEndOfLink(state) {
   return !after || !linkType.isInSet(after.marks);
 }
 
+// True when the clipboard or pasted string is markdown of the form [label](url). //
 function isMarkdownLinkText(text) {
   return /^\[[^\]]+\]\((https?:\/\/[^\s)]+|mailto:[^\s)]+)\)$/.test(text.trim());
 }
 
+// True when the string is a standalone http(s) URL. //
 function isBareUrlText(text) {
   return /^https?:\/\/\S+$/i.test(text.trim());
 }
 
+/**
+ * Replaces empty code blocks with ordinary paragraphs so that a vacant fence
+ * does not remain in the document. When `all` is false, only blocks that were
+ * already empty in the previous state are converted.
+ */
 function unwrapEmptyCodeBlocks(state, { all = false, oldState = null } = {}) {
   const paragraphType = state.schema.nodes.paragraph;
   if (!paragraphType) return null;
@@ -179,6 +205,10 @@ function unwrapEmptyCodeBlocks(state, { all = false, oldState = null } = {}) {
   return tr;
 }
 
+/**
+ * Converts literal markdown link syntax that are in textblocks into a proper link marks,
+ * excluding content that already are in a code block.
+ */
 function convertMarkdownLinks(state) {
   const linkType = getLinkType(state);
   if (!linkType) return null;
@@ -213,6 +243,7 @@ function convertMarkdownLinks(state) {
   return tr.setStoredMarks([]);
 }
 
+// CommonMark without the default inclusive link mark; a non-inclusive variant is supplied below.
 const commonmarkWithoutLink = commonmark.filter(
   (plugin) => plugin !== linkSchema.ctx && plugin !== linkSchema.mark
 );
@@ -222,6 +253,11 @@ const nonInclusiveLink = linkSchema.extendSchema((prev) => (ctx) => ({
   inclusive: false
 }));
 
+/**
+ * ProseMirror plugin that (a) converts markdown links after edits, (b) unwraps
+ * empty code fences, (c) treats pasted URLs as links, and (d) allows the typing cursor
+ * to leave a link or code block via keyboard navigation.
+ */
 const linkBehaviorPlugin = $prose(() => {
   return new Plugin({
     key: new PluginKey("CHARCOAL_LINKS"),
@@ -331,6 +367,7 @@ const linkBehaviorPlugin = $prose(() => {
   });
 });
 
+// Destroys any existing editor and mounts a new Milkdown instance with the given markdown. //
 async function createEditor(content) {
   if (milkdownEditor) {
     await milkdownEditor.destroy();
@@ -384,6 +421,7 @@ async function createEditor(content) {
   }
 }
 
+// Records markdown changes on the active note and schedules a debounced save. //
 function onEditorContentChange(markdown) {
   if (currentNoteId == null) return;
 
@@ -396,6 +434,7 @@ function onEditorContentChange(markdown) {
   saveTimeout = setTimeout(saveNoteToDB, 200);
 }
 
+// Reveals the guest-mode banner when notes are stored only for the current session. //
 async function updateNotesModeBanner() {
   if (!guestBanner) return;
   try {
@@ -408,6 +447,10 @@ async function updateNotesModeBanner() {
   }
 }
 
+/**
+ * Fetches the user's notes from the backend. Opening the document as a local
+ * file is rejected, since the API is only available through the HTTP server.
+ */
 async function loadNotes() {
   if (window.location.protocol === "file:") {
     console.error(
@@ -451,6 +494,7 @@ async function loadNotes() {
 
 loadNotes();
 
+// Makes the given note the active document and (on narrow viewports) closes the drawer. //
 function openNote(activenote) {
   clearTimeout(saveTimeout);
 
@@ -470,6 +514,10 @@ function openNote(activenote) {
   if (mobileNotesQuery.matches) closeNotesDrawer();
 }
 
+/**
+ * Sidebar label: prefer the explicit title, otherwise the first line of the
+ * body, otherwise a numbered placeholder for an entirely empty note.
+ */
 function getNoteSidebarTitle(note) {
   const completeTitle = (note.title || "").trim();
   const firstlineTitle = (note.content || "").trim();
@@ -493,6 +541,7 @@ function getNoteSidebarTitle(note) {
   return "Note";
 }
 
+// Rebuilds the sidebar list to reflect `notes` and highlights the open item. //
 function showNotes(){
   noteList.innerHTML = "";
 
@@ -516,11 +565,13 @@ function showNotes(){
   });
 }
 
+// Truncates a string to `maxLetters` characters and appends an ellipsis when needed. //
 function limitChars(text, maxLetters) {
   if (text.length <= maxLetters) return text;
   return text.slice(0, maxLetters) + "...";
 }
 
+// Creates an empty note on the server and opens it in the editor. //
 async function createNewNote() {
   try {
     const res = await apiFetch("/notes", {
@@ -548,6 +599,7 @@ async function createNewNote() {
   }
 }
 
+// The plus control and the empty-state surface both create a new note.
 if (plusBtn) {
   plusBtn.addEventListener("click", async () => {
     createNewNote();
@@ -557,15 +609,18 @@ if (plusBtn) {
 
 if (noNotesSpace) noNotesSpace.addEventListener("click", createNewNote);
 
+// Reveals the deletion confirmation dialogue, provided a note is currently open. //
 function showDeleteModal() {
   if (currentNoteId == null) return;
   deleteModal?.classList.remove("hidden");
 }
 
+// Hides the deletion confirmation dialogue. //
 function hideDeleteModal() {
   deleteModal?.classList.add("hidden");
 }
 
+// Removes the active note via DELETE and either opens another note or the empty state. //
 async function performDelete() {
   if (currentNoteId == null) return;
 
@@ -595,6 +650,7 @@ async function performDelete() {
   }
 }
 
+// Downloads the active note as a markdown file whose name is derived from the note title. //
 function exportCurrentNote() {
   const note = notes.find((n) => n.id == currentNoteId);
   if (!note) return;
@@ -611,6 +667,7 @@ function exportCurrentNote() {
   URL.revokeObjectURL(url);
 }
 
+// Deletion dialogue: confirm, cancel, overlay click, Escape, and Enter.
 if (deleteBtn) deleteBtn.addEventListener("click", showDeleteModal);
 if (deleteCancelBtn) deleteCancelBtn.addEventListener("click", hideDeleteModal);
 if (deleteConfirmBtn) {
@@ -649,6 +706,7 @@ document.addEventListener("keydown", async (e) => {
  
 if (exportBtn) exportBtn.addEventListener("click", exportCurrentNote);
 
+// True when the narrow-viewport drawer is open and overlays the note list above the editor. //
 function isNotesDrawerOpen() {
   return layout?.classList.contains("notes-drawer-open");
 }
@@ -666,6 +724,7 @@ function toggleNotesDrawer() {
   setNotesDrawerOpen(!isNotesDrawerOpen());
 }
 
+// Drawer open/close on mobile; closed automatically when the viewport widens.
 if (notesListBtn) notesListBtn.addEventListener("click", toggleNotesDrawer);
 if (notesBackdrop) notesBackdrop.addEventListener("click", closeNotesDrawer);
 if (notesDrawerCloseBtn) notesDrawerCloseBtn.addEventListener("click", closeNotesDrawer);
@@ -676,6 +735,7 @@ if (mobileNotesQuery.addEventListener) {
   });
 }
 
+// Title edits are persisted with the same debounce interval as body edits.
 noteTitle.addEventListener("input", () => {
   if (currentNoteId == null) return;
 
@@ -688,6 +748,7 @@ noteTitle.addEventListener("input", () => {
   saveTimeout = setTimeout(saveNoteToDB, 200);
 });
 
+// Enter or ArrowDown from the title field moves focus into the editor body.
 noteTitle.addEventListener("keydown", (e) => {
   if (e.key === "Enter" || e.key === "ArrowDown") {
     e.preventDefault();
@@ -696,6 +757,7 @@ noteTitle.addEventListener("keydown", (e) => {
   }
 });
 
+// True when the typing cursor is at the very beginning of the contenteditable editor. //
 function isCursorAtStartOfEditor(editableEl) {
   const selection = window.getSelection();
   if (!selection.rangeCount) return false;
@@ -711,6 +773,7 @@ function isCursorAtStartOfEditor(editableEl) {
   return preRange.toString().length === 0;
 }
 
+// Backspace or ArrowUp at the start of the body returns focus to the title field.
 textAreaMount.addEventListener("keydown", (e) => {
   const editable = textAreaMount.querySelector('[contenteditable="true"]');
   if (!editable) return;
@@ -723,6 +786,7 @@ textAreaMount.addEventListener("keydown", (e) => {
   }
 });
 
+// Persists the active note's title and content to the server via PUT. //
 async function saveNoteToDB() {
   const note = notes.find(n => n.id == currentNoteId);
   if (!note) return;

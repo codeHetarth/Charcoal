@@ -4,21 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Notes</title>
-  <!-- Standard favicon (browser tab) -->
+  <!-- Standard icon (browser tab) -->
   <link rel="icon" type="image/x-icon" href="/Logo/logo.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/Logo/logo16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/Logo/logo32x32.png">
   <link rel="icon" type="image/png" sizes="48x48" href="/Logo/logo48x48.png">
 
-  <!-- Apple touch icon (iPhone/iPad home screen) -->
+  <!-- Apple icon (iPhone/iPad home screen) -->
   <link rel="apple-touch-icon" sizes="180x180" href="/Logo/logo180x180.png">
 
-  <!-- Android / PWA icons -->
+  <!-- Android icons -->
   <link rel="icon" type="image/png" sizes="192x192" href="/Logo/logo192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/Logo/logo512x512.png">
 
   <link rel="stylesheet" href="notespage.css" />
 
+  <!-- Browser import map: Milkdown editor packages are resolved from esm.sh. -->
   <script type="importmap">
     {
       "imports": {
@@ -38,7 +39,9 @@
 
 </head>
 <body>
+  <!-- Two-column workspace: note inventory on the left, editor on the right. -->
   <main class="layout">
+    <!-- Sidebar: Charcoal logo, new-note control, and the list of existing notes. -->
     <section class="left-section">
         <nav class="left-section-navbar">
             <a class="logo" href="landingpage.html" id="logoLink">
@@ -53,14 +56,18 @@
         <ul class="note-list" id="noteList"></ul>
     </section>
 
+    <!-- Overlay that dismisses the mobile notes drawer when selected. -->
     <div class="notes-backdrop" id="notesBackdrop"></div>
         
+    <!-- Editor column: guest notice, toolbar, empty state, and Milkdown mount. -->
     <section class="right-section">
+        <!-- Shown when notes are stored only for the current browser session. -->
         <p id="guestBanner" class="guest-banner hidden" role="status">
           Guest mode — notes are temporary and disappear when you close the browser.
           <a href="auth.html">Sign in</a> to save them to your account.
         </p>
 
+        <!-- Toolbar: notes list (mobile), delete, export, and account. -->
         <nav class="right-section-navbar">
           <div class="right-section-navbar-start">
             <button type="button" class="notes-list-btn" id="notesListBtn" aria-controls="noteList" aria-expanded="false">Notes</button>
@@ -72,8 +79,10 @@
           </div>
         </nav>
 
+        <!-- Empty-state prompt; selecting it creates a new note. -->
         <div class="no-notes-space" id="noNotesSpace">Click to Create a New Note</div>
         
+        <!-- Title field and Milkdown text area for the note body. -->
         <div class="text-div">
           <input class="note-title" id="noteTitle" placeholder="Title..." />
           <div class="text-area" id="textArea"></div>
@@ -81,6 +90,7 @@
     </section>
   </main>
 
+  <!-- Confirmation dialogue for irreversible deletion of the active note. -->
   <div id="deleteModal" class="delete-modal hidden" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
     <div class="delete-modal-dialog">
       <h2 class="delete-modal-title" id="deleteModalTitle">Delete this note?</h2>

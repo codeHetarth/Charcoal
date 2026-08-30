@@ -7,10 +7,12 @@
     <link rel="stylesheet" href="auth.css">
 </head>
 <body>
+    <!-- Main container for the login and registration views, shared alert region for authentication failures returned by the server. -->
     <section class="auth-section">
+        <!-- Shared alert region for authentication failures returned by the server. -->
         <p id="auth-error" class="auth-error hidden" role="alert"></p>
 
-        <!-- Login -->
+        <!-- Login view: credential form and a control to switch to registration. -->
         <div id="loginView" class="auth-view" action="auth.html#Login">
             <div class="auth-div1">
                 <h1>Login to your Charcoal</h1>
@@ -32,7 +34,7 @@
             </div>
         </div>
 
-        <!-- Register -->
+        <!-- Registration view: profile fields, legal consent, and a return to login. -->
         <div id="registerView" class="auth-view hidden">
             <div class="auth-div1">
                 <h1>Register your Charcoal</h1>
@@ -76,35 +78,37 @@
     </section>
 
     <script>
+        // References for the two mutually exclusive authentication views.
         const loginView = document.getElementById("loginView");
         const registerView = document.getElementById("registerView");
 
+        // Presents the login view and hides registration. //
         function showLogin() {
             loginView.classList.remove("hidden");
             registerView.classList.add("hidden");
         }
 
+        // Presents the registration view and hides login. //
         function showRegister() {
             loginView.classList.add("hidden");
             registerView.classList.remove("hidden");
         }
 
+        // Switching to login, updates the fragment identifier without reloading the document.
         document.getElementById("show-login").addEventListener("click", (e) => {
             e.preventDefault();
             showLogin();
-            
-            // Change URL to auth.html#Login
             window.history.replaceState(null, "", "auth.html#Login");
         });
 
+        // Switching to registration likewise records the active view in the URL.
         document.getElementById("show-register").addEventListener("click", (e) => {
             e.preventDefault();
             showRegister();
-
-            // Change URL to auth.html#Register
             window.history.replaceState(null, "", "auth.html#Register");
         });
 
+        // On initial load, restore the view indicated by the URL fragment.
         if (window.location.hash === "#Register") {
             showRegister();
         }
@@ -114,18 +118,24 @@
 
         const authError = document.getElementById("auth-error");
 
+        // Displays a server- or client-side error within the shared alert region. //
         function showAuthError(message) {
             if (!authError) return;
             authError.textContent = message;
             authError.classList.remove("hidden");
         }
 
+        // Hides the alert region and discards any prior message. //
         function clearAuthError() {
             if (!authError) return;
             authError.textContent = "";
             authError.classList.add("hidden");
         }
 
+        /**
+         * Issues a JSON POST to the given authentication endpoint.
+         * Session credentials are included so that a cookie may be established.
+         */
         async function postAuth(url, body) {
             const res = await fetch(url, {
                 method: "POST",
@@ -140,6 +150,7 @@
             return data;
         }
 
+        // Login submission: authenticate, then proceed to the notes workspace.
         document.getElementById("login-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             clearAuthError();
@@ -155,6 +166,7 @@
             }
         });
 
+        // Registration submission: confirm passwords locally, then create the account.
         document.getElementById("register-form").addEventListener("submit", async (e) => {
             e.preventDefault();
             clearAuthError();
@@ -179,6 +191,7 @@
             }
         });
 
+        // Clear a previous mismatch constraint once the user revises either password field.
         document.getElementById("register-form").addEventListener("input", (e) => {
             if (e.target.name === "password_confirm" || e.target.name === "password") {
                 e.target.form.password_confirm.setCustomValidity("");

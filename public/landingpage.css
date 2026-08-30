@@ -2,9 +2,9 @@
 *,
 *::before,
 *::after {
-  margin: 0;
-  padding: 0;  
-  box-sizing: border-box;
+margin: 0;
+padding: 0;  
+box-sizing: border-box;
 }
 
 /* Basic webpage settings */
@@ -60,463 +60,475 @@ body {
   display: block;
 }
 .logo span { font-weight: 700; letter-spacing: 0.5px; color: #fff; }
-  
-  /* Navbar right-part settings start from here */
-  .menu {
-    padding: 0 0 10px;
-    margin: 0;
-    display: flex;
-    list-style: none;
-    align-items: center;
-  }
-  
-  .menu a {
-    padding: 10px;
-    margin: 10px 20px 10px;
-    color: white;
-    text-decoration: none;
-    cursor: pointer;
-    font-size: 16px;
-  }
 
-  .menu a:hover {
-    background-color: #42464B;
-    border-radius: 5px;
-  }
- 
-  .gap {
-    padding: 30px;
-    margin: 30px;
-  }
+/* Navbar right-part settings start from here */
+.menu {
+  padding: 0 0 10px;
+  margin: 0;
+  display: flex;
+  list-style: none;
+  align-items: center;
+}
 
-  .section {
-    padding: 40px;
-    margin: 100px;
-  }
+.menu a {
+  padding: 10px;
+  margin: 10px 20px 10px;
+  color: white;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 16px;
+}
 
-  .section-hidden {
-    display: none;
-  }
-
-  .about-lead {
-    max-width: 720px;
-    margin: 48px 48px;
-    font-size: 20px;
-    line-height: 1.6;
-    text-align: justify;
-  }
-
-  .about-heading {
-    margin: 48px 48px 16px;
-    font-size: 22px;
-  }
-
-  .about-list,
-  .about-last {
-    max-width: 720px;
-    margin: 0 48px 48px;
-    padding-left: 24px;
-    font-size: 20px;
-    line-height: 1.6;
-    text-align: justify;
-  }
-
-  .about-list li {
-    font-size: 20px;
-  }
-
-  .about-startbtn {
-    margin: 48px 48px;
-  }
-
-  .about-list code,
-  .about-lead code {
-    padding: 2px 6px;
-    border-radius: 4px;
-    background: #1e1e1e;
-    font-size: 19px;
-  }
+.menu a:hover {
+  background-color: #42464B;
+  border-radius: 5px;
+}
 
 
-  .account-panel-hidden {
-    display: none;
+/* Gap for space between sections */
+.gap {
+  padding: 30px;
+  margin: 30px;
+}
+
+/* Section general settings */
+.section {
+  padding: 40px;
+  margin: 100px;
+}
+
+/* Section hidden settings for About and Account pages */
+.section-hidden {
+  display: none;
+}
+
+/* About page settings starts from here */
+.about-lead {
+  max-width: 720px;
+  margin: 48px 48px;
+  font-size: 20px;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.about-heading {
+  margin: 48px 48px 16px;
+  font-size: 22px;
+}
+
+.about-list,
+.about-last {
+  max-width: 720px;
+  margin: 0 48px 48px;
+  padding-left: 24px;
+  font-size: 20px;
+  line-height: 1.6;
+  text-align: justify;
+}
+
+.about-list li {
+  font-size: 20px;
+}
+
+.about-startbtn {
+  margin: 48px 48px;
+}
+
+.about-list code,
+.about-lead code {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #1e1e1e;
+  font-size: 19px;
+}
+/* About page settings ends here */
+
+
+/* Account page settings starts from here */
+.account-panel-hidden {
+  display: none;
+}
+
+/* Account page settings for logged in and logged out users, using Js id directly */
+#accountLoggedIn,
+#accountLoggedOut {
+  margin: 48px 48px;
+  font-size: 20px;
+}
+
+.account-personal-info {
+  margin: 20px 48px;
+}
+
+.account-input {
+  width: 100%;
+  max-width: 320px;
+  padding: 10px 25px;
+  margin: 10px 25px;
+  font-size: 16px;
+  background-color: #fff;
+  border: 1px solid;
+  border-radius: 6px;
+}
+.save-error {
+  color: #c0392b;
+  margin: 10px 25px;
+}
+.hidden {
+  display: none;
+}
+
+.save-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.save-btn {
+  color: #fff;
+  background: #42464b;
+}
+
+.save-btn:hover {
+  background: #52565b;
+}
+
+.save-modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  background: #00000099;
+  justify-content: center;
+  align-items: center;
+}
+
+.save-modal-dialog {
+  width: min(400px, calc(100% - 32px));
+  padding: 24px;
+  border-radius: 10px;
+  background: #222;
+  border: 1px solid #333;
+}
+
+.save-modal p {
+  margin: 0 0 24px;
+  font-size: 15px;
+  color: #aaa;
+}
+
+.save-modal-ok-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  background: #42464b;
+  color: white;
+}
+
+.save-modal-ok-btn:hover {
+  background: #52565b;
+}
+
+.account-more {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin: 20px 48px;
+}
+
+.account-logout-btn,
+.account-delete-btn {
+  display: flex;
+  flex-direction: column;
+  padding: 10px 30px;
+  margin: 5px 0;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+}
+
+.account-logout-btn {
+  background-color: #006400;
+}
+
+.account-logout-btn:hover {
+  background-color: #002a00;
+}
+
+.account-delete-btn {
+  background-color: #c0392b;
+}
+
+.account-delete-btn:hover {
+  background-color: #e74c3c;
+}
+
+.acc-logout-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #00000099;
+}
+
+.acc-logout-modal.hidden {
+  display: none;
+}
+
+.acc-logout-modal-dialog {
+  width: min(400px, calc(100% - 32px));
+  padding: 24px;
+  border-radius: 10px;
+  background: #222;
+  border: 1px solid #333;
+}
+
+.acc-logout-modal-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.acc-logout-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.acc-logout-modal-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.acc-logout-modal-cancel {
+  color: #fff;
+  background: #42464b;
+}
+
+.acc-logout-modal-cancel:hover {
+  background: #52565b;
+}
+
+.acc-logout-modal-confirm {
+  color: #fff;
+  background: #006400;
+}
+
+.acc-logout-modal-confirm:hover {
+  background: #002A00;
+}
+
+
+.acc-delete-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #00000099;
+}
+
+.acc-delete-modal.hidden {
+  display: none;
+}
+
+.acc-delete-modal-dialog {
+  width: min(400px, calc(100% - 32px));
+  padding: 24px;
+  border-radius: 10px;
+  background: #222;
+  border: 1px solid #333;
+}
+
+.acc-delete-modal-title {
+  margin: 0 0 8px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.acc-delete-modal-text {
+  margin: 28px 0px 24px;
+  font-size: 17px;
+  color: #aaa;
+}
+
+.acc-delete-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.acc-delete-modal-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.acc-delete-modal-cancel {
+  color: #fff;
+  background: #42464b;
+}
+
+.acc-delete-modal-cancel:hover {
+  background: #52565b;
+}
+
+.acc-delete-modal-confirm {
+  color: #fff;
+  background: #c0392b;
+}
+
+.acc-delete-modal-confirm:hover {
+  background: #e74c3c;
+}
+/* Account page settings ends here */
+
+/* Section 1 settings, Create MD, Write button and Picture */
+.section1-h1 {
+  padding: 40px 0 20px;
+  margin: 40px 0;
+}
+
+/* Button settings, Write button and Login/Register button */
+.writeBtn,
+.optionBtns a,
+a.optionBtns {
+  display: inline-block;
+  box-sizing: border-box;
+  min-width: 240px;
+  padding: 20px 40px;
+  margin: 40px 0;
+  background-color: #006400;
+  color: #FFFFFF;
+  text-decoration: none;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.writeBtn:hover,
+.optionBtns a:hover,
+a.optionBtns:hover {
+  background-color: #002A00;
+}
+
+/* The welcome picture */
+.home-img {
+  display: block;
+  text-align: center;
+  max-width: 100%;
+  max-height: 100%;
+  border-color: #42464b;
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 2px;
+}
+
+/* Section 2, images of the Web application features */
+.section2-h1 {
+  text-align: center;
+  padding: 40px 0;
+  margin: 40px 0;
+  font-size: 40px;
+}
+
+.section2-div1 {
+  display: block;
+  gap: 20px;
+}
+
+.section2-div2-fig-right,
+.section2-div2-fig-left {
+  padding: 40px 0;
+  margin: 80px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 22px;
+}
+
+.section2-div2-fig-right {
+  flex-direction: row-reverse;
+  text-align: right;
+}  
+
+.section2-div2-fig-left {
+  flex-direction: row;
+  text-align: left;
+}
+
+.manage-notes-img,
+.write-notes-img,
+.export-notes-img {
+  width: 45%;
+  max-width: 500px;
+  height: auto;
+  display: block;
+  border-color: #42464b;
+  border-style: solid;
+  border-radius: 5px;
+  border-width: 2px;
+}
+
+/* Section 3, final message, Start writing button and Login/Register button */
+.section3-div2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+div.optionBtns {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Footer settings starts from here */
+.footer {
+padding: 40px;
+margin: 100px;
+display: flex;
+justify-content: space-between;
+align-items: center;
   }
 
-  #accountLoggedIn,
-  #accountLoggedOut {
-    margin: 48px 48px;
-    font-size: 20px;
-  }
+.footer-div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
 
-  .account-personal-info {
-    margin: 20px 48px;
-  }
+.footer-div a {
+  padding: 0;
+  margin: 20px 0;
+  color: #FFFFFF;
+  text-decoration: none; 
+}
 
-  .account-input {
-    width: 100%;
-    max-width: 320px;
-    padding: 10px 25px;
-    margin: 10px 25px;
-    font-size: 16px;
-    background-color: #fff;
-    border: 1px solid;
-    border-radius: 6px;
+.footer-div a:hover {
+  color: #006400;
   }
-  .save-error {
-    color: #c0392b;
-    margin: 10px 25px;
-  }
-  .hidden {
-    display: none;
-  }
+/* Footer settings ends here */
 
-  .save-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    font-size: 10px;
-    cursor: pointer;
-  }
-  
-  .save-btn {
-    color: #fff;
-    background: #42464b;
-  }
-  
-  .save-btn:hover {
-    background: #52565b;
-  }
-
-  .save-modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    inset: 0;
-    background: #00000099;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .save-modal-dialog {
-    width: min(400px, calc(100% - 32px));
-    padding: 24px;
-    border-radius: 10px;
-    background: #222;
-    border: 1px solid #333;
-  }
-
-  .save-modal p {
-    margin: 0 0 24px;
-    font-size: 15px;
-    color: #aaa;
-  }
-  
-  .save-modal-ok-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    cursor: pointer;
-    background: #42464b;
-    color: white;
-  }
-  
-  .save-modal-ok-btn:hover {
-    background: #52565b;
-  }
-
-  .account-more {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin: 20px 48px;
-  }
-  
-  .account-logout-btn,
-  .account-delete-btn {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 30px;
-    margin: 5px 0;
-    color: #ffffff;
-    text-decoration: none;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    font-size: 12px;
-    font-family: inherit;
-  }
-  
-  .account-logout-btn {
-    background-color: #006400;
-  }
-  
-  .account-logout-btn:hover {
-    background-color: #002a00;
-  }
-  
-  .account-delete-btn {
-    background-color: #c0392b;
-  }
-  
-  .account-delete-btn:hover {
-    background-color: #e74c3c;
-  }
-
-  .acc-logout-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #00000099;
-  }
-  
-  .acc-logout-modal.hidden {
-    display: none;
-  }
-  
-  .acc-logout-modal-dialog {
-    width: min(400px, calc(100% - 32px));
-    padding: 24px;
-    border-radius: 10px;
-    background: #222;
-    border: 1px solid #333;
-  }
-  
-  .acc-logout-modal-title {
-    margin: 0 0 8px;
-    font-size: 20px;
-    font-weight: 600;
-  }
-  
-  .acc-logout-modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-  }
-  
-  .acc-logout-modal-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    cursor: pointer;
-  }
-  
-  .acc-logout-modal-cancel {
-    color: #fff;
-    background: #42464b;
-  }
-  
-  .acc-logout-modal-cancel:hover {
-    background: #52565b;
-  }
-  
-  .acc-logout-modal-confirm {
-    color: #fff;
-    background: #006400;
-  }
-  
-  .acc-logout-modal-confirm:hover {
-    background: #002A00;
-  }
-  
-
-  .acc-delete-modal {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #00000099;
-  }
-  
-  .acc-delete-modal.hidden {
-    display: none;
-  }
-  
-  .acc-delete-modal-dialog {
-    width: min(400px, calc(100% - 32px));
-    padding: 24px;
-    border-radius: 10px;
-    background: #222;
-    border: 1px solid #333;
-  }
-  
-  .acc-delete-modal-title {
-    margin: 0 0 8px;
-    font-size: 20px;
-    font-weight: 600;
-  }
-  
-  .acc-delete-modal-text {
-    margin: 28px 0px 24px;
-    font-size: 17px;
-    color: #aaa;
-  }
-  
-  .acc-delete-modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 12px;
-  }
-  
-  .acc-delete-modal-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    font-size: 15px;
-    cursor: pointer;
-  }
-  
-  .acc-delete-modal-cancel {
-    color: #fff;
-    background: #42464b;
-  }
-  
-  .acc-delete-modal-cancel:hover {
-    background: #52565b;
-  }
-  
-  .acc-delete-modal-confirm {
-    color: #fff;
-    background: #c0392b;
-  }
-  
-  .acc-delete-modal-confirm:hover {
-    background: #e74c3c;
-  }
-
-  /* Section 1 starts from here */
-  .section1-h1 {
-    padding: 40px 0 20px;
-    margin: 40px 0;
-  }
-
-  .writeBtn,
-  .optionBtns a,
-  a.optionBtns {
-    display: inline-block;
-    box-sizing: border-box;
-    min-width: 240px;
-    padding: 20px 40px;
-    margin: 40px 0;
-    background-color: #006400;
-    color: #FFFFFF;
-    text-decoration: none;
-    border-radius: 5px;
-    text-align: center;
-    font-size: 16px;
-    line-height: 1.4;
-    white-space: nowrap;
-  }
-
-  .writeBtn:hover,
-  .optionBtns a:hover,
-  a.optionBtns:hover {
-    background-color: #002A00;
-  }
-
-  .home-img {
-    display: block;
-    text-align: center;
-    max-width: 100%;
-    max-height: 100%;
-    border-color: #42464b;
-    border-style: solid;
-    border-radius: 5px;
-    border-width: 2px;
-  }
-
-/* Section 2 starts from here */
-  .section2-h1 {
-    text-align: center;
-    padding: 40px 0;
-    margin: 40px 0;
-    font-size: 40px;
-  }
-
-  .section2-div1 {
-    display: block;
-    gap: 20px;
-  }
-
-  .section2-div2-fig-right,
-  .section2-div2-fig-left {
-    padding: 40px 0;
-    margin: 80px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 22px;
-  }
-
-  .section2-div2-fig-right {
-    flex-direction: row-reverse;
-    text-align: right;
-  }  
-
-  .section2-div2-fig-left {
-    flex-direction: row;
-    text-align: left;
-  }
-
-  .manage-notes-img,
-  .write-notes-img,
-  .export-notes-img {
-    width: 45%;
-    max-width: 500px;
-    height: auto;
-    display: block;
-    border-color: #42464b;
-    border-style: solid;
-    border-radius: 5px;
-    border-width: 2px;
-  }
-
-/* Section 3 starts from here */
-  .section3-div2 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  div.optionBtns {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-  }
-
- /* Footer settings starts from here */
-  .footer {
-    padding: 40px;
-    margin: 100px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footer-div {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .footer-div a {
-    padding: 0;
-    margin: 20px 0;
-    color: #FFFFFF;
-    text-decoration: none; 
-  }
-
-  .footer-div a:hover {
-    color: #006400;
-  }
-
-/* Extra-wide screens */
+/* Extra-wide screens settings starts from here */
 @media (min-width: 1400px) {
   .section,
   .footer {
@@ -531,8 +543,11 @@ body {
     padding-right: calc(max(40px, (100vw - 1280px) / 2) + 40px);
   }
 }
+/* Extra-wide screens settings ends here */
 
-/* Tablets / small laptops */
+
+/* Tablets / small laptops settings starts from here */
+  /* Includes navbar and menu, logo, section, footer, images, about, and account page configuration  */
 @media (max-width: 1024px) {
   html {
     margin: 16px;
@@ -606,10 +621,10 @@ body {
     margin-right: 24px;
   }
 }
-
+/* Tablets / small laptops settings ends here */
 
 /* The configuration for the tablet screens */
-
+  /* Includes navbar and menu, logo, section, buttons, footer, images, about, and account page configuration  */
 @media (max-width: 768px) {
   html {
     margin: 40px;
@@ -763,10 +778,11 @@ body {
     flex-wrap: wrap;
   }
 }
+/* The configuration for the tablet screens ends here */
 
 
 /* The configuration for the smallest screens */
-
+  /* Includes navbar and menu, logo, section, buttons, dialog boxes, footer, images, about, and account page configuration  */
 @media (max-width: 480px) {
   html {
     margin: 16px;
@@ -864,3 +880,4 @@ body {
     margin: 10px 0;
   }  
 }
+/* The configuration for the smallest screens ends here */

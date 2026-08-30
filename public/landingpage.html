@@ -4,16 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Charcoal</title>
-  <!-- Standard favicon (browser tab) -->
+  <!-- Standard icon (browser tab) -->
   <link rel="icon" type="image/x-icon" href="/Logo/logo.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/Logo/logo16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/Logo/logo32x32.png">
   <link rel="icon" type="image/png" sizes="48x48" href="/Logo/logo48x48.png">
   
-  <!-- Apple touch icon (iPhone/iPad home screen) -->
+  <!-- Apple icon (iPhone/iPad home screen) -->
   <link rel="apple-touch-icon" sizes="180x180" href="/Logo/logo180x180.png">
   
-  <!-- Android / PWA icons -->
+  <!-- Android icons -->
   <link rel="icon" type="image/png" sizes="192x192" href="/Logo/logo192x192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="/Logo/logo512x512.png">
   <link rel="stylesheet" href="landingpage.css"> 
@@ -44,7 +44,7 @@
      <!-- Landing page is by default -->
     <section id="landingPage">
 
-      <!-- Section 1 starts -->
+      <!-- Section 1 starts, inludes Welcome message, Write button and Picture -->
       <section class="section">
         <h1 class="section1-h1">CREATE MD... NOW!!!</h1>
         <!-- Section 1 Link 1 :- Link to the notes page -->
@@ -57,7 +57,7 @@
       </section>
       <!-- Section 1 ends -->
 
-      <!-- Section 2 starts -->
+      <!-- Section 2 starts, inlcudes images of the Web application features -->
       <section class="section">
         <h1 class="section2-h1">WORK YOUR WAY...</h1>
 
@@ -94,7 +94,7 @@
       </section>
       <!-- Section 2 ends-->
 
-      <!-- Section 3 starts-->
+      <!-- Section 3 starts, includes final message, Start writing button and Login/Register button -->
       <section class="section">
 
         <div class="gap"></div>           <!-- A gap for space -->
@@ -119,8 +119,10 @@
     <!-- Section for Landing Page ends -->
 
     <!-- Section for About Page starts -->
-     <!-- CSS.Class specifies the page is hidden and only appears when user clicks -->
+     <!-- CSS.Class specifies the page is hidden and only appears when user clicks from the web application navbar -->
     <section id="aboutPage" class="section section-hidden">
+
+      <!-- The about content starts from here-->
       <h1>About Charcoal</h1>
       <p class="about-lead">
         Charcoal is a lightweight note-taking app built for people who think in markdown.
@@ -148,51 +150,55 @@
       <p class="about-last">
         You can contact us at support@yourwebsite.com, and we'll do our best to get back to you as soon as possible.
       </p>
+      <!-- The about content ends here-->
 
+      <!-- additional links to the notes page and the home page -->
       <div class="about-startbtn">
         <a href="notespage.html" class="optionBtns">Start writing →</a>
       </div>
-      <a href="landingpage.html#about" class="optionBtns" id="aboutBackToHome">Back to Home</a>
+      <a href="#home" class="optionBtns" id="aboutBackToHome">Back to Home</a>
     </section>
     <!-- Section for About Page ends -->
 
     <!-- Section for Account Page starts -->
-     <!-- CSS.Class specifies the page is hidden and only appears when user clicks -->
+     <!-- CSS.Class specifies the page is hidden and only appears when user clicks from the web application navbar -->
     <section id="accountPage" class="section section-hidden">
       <h1>Account</h1>
       <div id="accountLoggedOut">
+        <!-- If the user is not signed in, show the login/register button -->
         <p>You are not signed in.</p>
         <a href="auth.html" class="optionBtns">Login / Register</a>
       </div>
 
+      <!-- If the user is signed in, show the personal information -->
       <div id="accountLoggedIn" class="account-panel-hidden">
         <h3>Personal Information</h3>
         <div class="account-personal-info">
-          <p><strong>Username :</strong></p>
+          <p><strong>Username :</strong></p> <!-- Username can be seen and changed -->
           <input type="text" id="accountName" class="account-input" autocomplete="name"></input>
         </div>
 
         <div class="account-personal-info">
-          <p><strong>Email :</strong></p>
+          <p><strong>Email :</strong></p> <!-- Email can be seen and changed -->
           <input type="text" id="accountEmail" class="account-input" autocomplete="email" 
                 required
                 pattern="^[^\s@]+@[^\s@]+\.[^\s@]{2,}$"
                 title="Enter a valid email address, e.g. name@example.com"></input>
         </div>
 
-        <p id="saveError" class="save-error hidden"></p>
-        <button id="saveBtn" class="save-btn">Save Changes</button>
+        <p id="saveError" class="save-error hidden"></p> <!-- Error message for saving changes -->
+        <button id="saveBtn" class="save-btn">Save Changes</button> <!-- Button to save changes -->
 
-        <div id="saveModal" class="save-modal">
+        <div id="saveModal" class="save-modal"> <!-- Modal to show the success message for saving changes -->
           <div class="save-modal-dialog">
-            <p>Your account changes have been saved successfully.</p>
+            <p>Your account changes have been saved successfully.</p> <!-- Success message for saving changes -->
             <button id="okBtn" class="save-modal-ok-btn">OK</button>
           </div>
         </div>
 
         <div class="gap"></div>
 
-        <h3>More</h3>
+        <h3>More</h3> <!-- More options for the user, Logout and Delete account operations -->
         <div class="account-more">
           <button type="button" class="account-logout-btn" id="accLogoutBtn">Log out</button>
           <div id="accLogoutModal" class="acc-logout-modal hidden" role="dialog" aria-modal="true" aria-labelledby="accLogoutModalTitle">
@@ -230,7 +236,7 @@
           
       
       </div>
-      <a href="landingpage.html#account" class="optionBtns" id="accountBackToHome">Back to Home</a>
+      <a href="#home" class="optionBtns" id="accountBackToHome">Back to Home</a>
     </section>
     <!-- Section for Account Page ends -->
 

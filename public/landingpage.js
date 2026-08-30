@@ -1,20 +1,20 @@
-// Link-variables to reference the right section links of the navbar 
+// DOM references for the primary navigation links.
 const aboutLink = document.getElementById("aboutLink");
 const accountLink = document.getElementById("accountLink");
 const logoLink = document.getElementById("logoLink");
 const loginRegisterLink = document.getElementById("loginRegisterLink");
 const contactLink = document.getElementById("contactLink");
 
-// BackToHome-variables to reference back to the landing page from the other pages when clicked
+// Controls that return the user to the landing view from secondary pages.
 const aboutBackToHome = document.getElementById("aboutBackToHome");
 const accountBackToHome = document.getElementById("accountBackToHome");
 
-// Page-variables to refer page when clicked depending on the link
+// Root containers for each client-side view (landing, about, and account).
 const landingPage = document.getElementById("landingPage");
 const aboutPage = document.getElementById("aboutPage");
 const accountPage = document.getElementById("accountPage");
 
-// Stores all variables for Account Login and Logout Page
+// Account view: authenticated and unauthenticated panels, profile fields, and logout dialogue.
 const accountLoggedOut = document.getElementById("accountLoggedOut");
 const accountLoggedIn = document.getElementById("accountLoggedIn");
 const accountName = document.getElementById("accountName");
@@ -24,22 +24,25 @@ const accLogoutModal = document.getElementById("accLogoutModal");
 const accLogoutConfirmBtn = document.getElementById("accLogoutConfirmBtn");
 const accLogoutCancelBtn = document.getElementById("accLogoutCancelBtn");
 
-// Save Changes modal variables are stored
+// Elements associated with persisting profile amendments and reporting validation errors.
 const saveBtn = document.getElementById("saveBtn");
 const saveModal = document.getElementById("saveModal");
 const okBtn = document.getElementById("okBtn");
 const saveError = document.getElementById("saveError");
 
-// Delete Account modal variables are stored
+// Elements associated with the account-deletion confirmation dialogue.
 const accDeleteBtn = document.getElementById("accDeleteBtn");
 const accDeleteModal = document.getElementById("accDeleteModal");
 const accDeleteConfirmBtn = document.getElementById("accDeleteConfirmBtn");
 const accDeleteCancelBtn = document.getElementById("accDeleteCancelBtn");
 
-// Stores all the pages in an array that will make easier to loop
+// Collection of page sections, used to apply visibility changes in a single iteration.
 const allSections = [landingPage, aboutPage, accountPage];
 
-// Function to show the requested Page on an event(click)
+/**
+ * Displays the requested view by concealing all other sections,
+ * updating the document hash, and resetting scroll position.
+ */
 function showPage(event, pageToShow, hash) {
   event.preventDefault();
 
@@ -49,11 +52,11 @@ function showPage(event, pageToShow, hash) {
 
   pageToShow.classList.remove("section-hidden");
 
+  // The account view is populated from the current session on each visit.
   if (pageToShow === accountPage) {
     loadAccountDetails();
   }
 
-  // Update the URL hash
   history.pushState(null, "", hash);
 
   window.scrollTo({
@@ -62,7 +65,7 @@ function showPage(event, pageToShow, hash) {
   });
 }
 
-// To redirect on the page on event(click) 
+// Bind navigation and "return home" controls to the corresponding views.
 aboutLink.addEventListener("click", (event) => showPage(event, aboutPage, "#about"));
 accountLink.addEventListener("click", (event) => showPage(event, accountPage, "#account"));
 logoLink.addEventListener("click", (event) => showPage(event, landingPage, "#home"));
@@ -70,12 +73,14 @@ loginRegisterLink.addEventListener("click", handleLoginRegister);
 aboutBackToHome.addEventListener("click", (event) => showPage(event, landingPage, "#home"));
 accountBackToHome.addEventListener("click", (event) => showPage(event, landingPage, "#home"));
 
+// Correspondence between URL fragments and their associated page sections.
 const hashToPage = {
   "#home": landingPage,
   "#about": aboutPage,
   "#account": accountPage,
 };
 
+/** Restores the appropriate view from the current URL fragment, if one is present. */
 function showPageFromHash() {
   const page = hashToPage[window.location.hash];
   if (!page) return;
@@ -87,6 +92,11 @@ function showPageFromHash() {
 
 showPageFromHash();
 
+/**
+ * Resolves the Login/Register action according to session state:
+ * authenticated users are directed to the account view; otherwise
+ * the browser is redirected to the dedicated authentication page.
+ */
 async function handleLoginRegister(event) {
   event.preventDefault();
 
@@ -96,10 +106,10 @@ async function handleLoginRegister(event) {
     });
 
     if (res.ok) {
-      // User is logged in
+      // An active session was confirmed.
       showPage(event, accountPage, "#account");
     } else {
-      // User is not logged in
+      // No valid session; authentication is required.
       window.location.href = "auth.html";
     }
 
@@ -109,16 +119,20 @@ async function handleLoginRegister(event) {
   }
 }
 
-// Link for contactLink, redirected to About section
-
+// The contact control presents the About view, which contains contact information.
 contactLink.addEventListener("click", (event) => showPage(event, aboutPage, "#aboutPage"));
 
+/**
+ * Retrieves the current user from the server and selects the
+ * authenticated or unauthenticated account panel accordingly.
+ */
 async function loadAccountDetails() {
   if (!accountLoggedOut || !accountLoggedIn) return;
 
   try {
     const res = await fetch("/auth/me", { credentials: "include" });
     if (!res.ok) {
+      // Unauthenticated: present the logged-out panel.
       accountLoggedOut.classList.remove("account-panel-hidden");
       accountLoggedIn.classList.add("account-panel-hidden");
       return;
@@ -130,15 +144,18 @@ async function loadAccountDetails() {
     accountLoggedOut.classList.add("account-panel-hidden");
     accountLoggedIn.classList.remove("account-panel-hidden");
   } catch {
+    // In the event of a network or authentication failure, revert to the logged-out panel.
     accountLoggedOut.classList.remove("account-panel-hidden");
     accountLoggedIn.classList.add("account-panel-hidden");
   }
 }
 
+// Reveals the logout confirmation dialogue. //
 function showAccLogoutModal() {
   accLogoutModal.classList.remove("hidden");
 }
 
+// Hides the logout confirmation dialogue. //
 function hideAccLogoutModal() {
   accLogoutModal.classList.add("hidden");
 }
@@ -146,6 +163,7 @@ function hideAccLogoutModal() {
 if (accLogoutBtn) accLogoutBtn.addEventListener("click", showAccLogoutModal);
 if (accLogoutCancelBtn) accLogoutCancelBtn.addEventListener("click", hideAccLogoutModal);
 
+// Terminates the server session and subsequently refreshes the account view. //
 async function logoutAccount() {
   await fetch("/auth/logout", { method: "POST", credentials: "include" });
   await loadAccountDetails();
@@ -155,11 +173,14 @@ if (accLogoutConfirmBtn) {
   accLogoutConfirmBtn.addEventListener("click", logoutAccount)
 }
 
+// Dismissal of the logout dialogue when the overlay (outside the modal) is selected.
 if (accLogoutModal) {
   accLogoutModal.addEventListener("click", (e) => {
     if (e.target === accLogoutModal) hideAccLogoutModal();
   });
 }
+
+// Keyboard support: Escape dismisses the dialogue; Enter confirms logout.
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && accLogoutModal && !accLogoutModal.classList.contains("hidden")) {
     hideAccLogoutModal();
@@ -172,7 +193,12 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
+/**
+ * Validates the submitted name and email, issues a PUT request to persist
+ * the amendments, and, upon success, presents a confirmation dialogue.
+ */
 async function saveAccountChanges() {
+  // Discard any previously displayed validation message.
   if (saveError) {
     saveError.classList.add("hidden");
     saveError.textContent = "";
@@ -182,6 +208,7 @@ async function saveAccountChanges() {
   const email = accountEmail ? accountEmail.value.trim() : "";
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
+  // Both identifiers are mandatory prior to any network request.
   if (!name || !email) {
     if (saveError) {
       saveError.textContent = "Username and email are required.";
@@ -203,6 +230,7 @@ async function saveAccountChanges() {
   saveBtn.textContent = "Saving...";
 
   try {
+    // Persist the revised profile attributes on the server.
     const res = await fetch("/auth/me", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -240,40 +268,50 @@ saveBtn.addEventListener("click", saveAccountChanges);
 
 okBtn.addEventListener("click", () => {saveModal.style.display = "none"});
 
-// Close modal when clicking outside the box
+// Dismissal of the save-success dialogue when the overlay is selected.
 saveModal.addEventListener("click", (event) => {
   if (event.target === saveModal) {
     saveModal.style.display = "none";
   }
 });
 
+// Reveals the account-deletion confirmation dialogue. //
 function showAccDeleteModal() {
   accDeleteModal.classList.remove("hidden");
 }
 
+// Hides the account-deletion confirmation dialogue. //
 function hideAccDeleteModal() {
   accDeleteModal.classList.add("hidden");
 }
 
 if (accDeleteBtn) accDeleteBtn.addEventListener("click", showAccDeleteModal);
 if (accDeleteCancelBtn) accDeleteCancelBtn.addEventListener("click", hideAccDeleteModal);
+
+// Dismissal of the deletion dialogue when the overlay is selected.
 if (accDeleteModal) {
   accDeleteModal.addEventListener("click", (e) => {
     if (e.target === accDeleteModal) hideAccDeleteModal();
   });
 }
+
+// Escape dismisses the deletion dialogue whilst it remains visible.
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && accDeleteModal && !accDeleteModal.classList.contains("hidden")) {
     hideAccDeleteModal();
   }
 });
 
+/**
+ * Permanently removes the user account via the server and, upon success,
+ * returns the interface to the landing view.
+ */
 async function deleteAccount() {
   try {
     const res = await fetch("/auth/me", { method: "DELETE", credentials: "include" });
     if (!res.ok) {
       console.error("Failed to delete account:", res.status);
-      return; // keep modal open, don't redirect
+      return; // Retain the dialogue; do not redirect on failure.
     }
     hideAccDeleteModal();
     await loadAccountDetails();
@@ -287,10 +325,9 @@ if (accDeleteConfirmBtn) {
   accDeleteConfirmBtn.addEventListener("click", deleteAccount);
 }
 
+// Enter confirms deletion whilst the corresponding dialogue remains visible.
 document.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && accDeleteModal && !accDeleteModal.classList.contains("hidden")) {
     deleteAccount();
   }
 });
-
-
