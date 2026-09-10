@@ -44,7 +44,8 @@
                 <form id="register-form" action="auth.html#Register">
                     <input type="text" name="name" placeholder="Full Name" required autocomplete="name">
                     <input type="email" name="email" placeholder="Email Address" required autocomplete="email">
-                    <p class="password-hint">At least 8 characters. Do not use your name, email, or a common password.</p>
+                    <p class="password-hint">At least 8 characters. 
+                        <br>Do not use your name, email, or a common password.</p>
                     <input type="password" name="password" placeholder="New Password" required autocomplete="new-password" minlength="8" maxlength="128">
                     <input type="password" name="password_confirm" placeholder="Confirm Password" required autocomplete="new-password" minlength="8" maxlength="128">
                 
@@ -117,6 +118,15 @@
         else {
             showLogin();
         }
+
+        // If a session already exists, skip login/register and go to Account.
+        fetch("/auth/me", { credentials: "include" })
+            .then((res) => {
+                if (res.ok) {
+                    window.location.replace("/landingpage.html#account");
+                }
+            })
+            .catch(() => {});
 
         const authError = document.getElementById("auth-error");
 
