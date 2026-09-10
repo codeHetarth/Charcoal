@@ -117,6 +117,15 @@ body {
     color: #002A00;
 }
 
+.password-hint {
+  font-size: 12px;
+  color: #b3b3b3;
+  text-align: left;
+  line-height: 1.4;
+  margin-top: 18px;
+  margin-bottom: -18px;
+}
+
 /* Server-reported authentication errors presented above the forms. */
 .auth-error {
   margin-bottom: 16px;

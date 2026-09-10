@@ -44,8 +44,9 @@
                 <form id="register-form" action="auth.html#Register">
                     <input type="text" name="name" placeholder="Full Name" required autocomplete="name">
                     <input type="email" name="email" placeholder="Email Address" required autocomplete="email">
-                    <input type="password" name="password" placeholder="New Password" required autocomplete="new-password">
-                    <input type="password" name="password_confirm" placeholder="Confirm Password" required autocomplete="new-password">
+                    <p class="password-hint">At least 8 characters. Do not use your name, email, or a common password.</p>
+                    <input type="password" name="password" placeholder="New Password" required autocomplete="new-password" minlength="8" maxlength="128">
+                    <input type="password" name="password_confirm" placeholder="Confirm Password" required autocomplete="new-password" minlength="8" maxlength="128">
                 
                     <div class="checkbox">
                         <input type="checkbox" name="terms" required>
@@ -77,6 +78,7 @@
         </div>
     </section>
 
+    <script src="password-policy.js"></script>
     <script>
         // References for the two mutually exclusive authentication views.
         const loginView = document.getElementById("loginView");
@@ -173,6 +175,16 @@
             const form = e.target;
             const password = form.password.value;
             const confirm = form.password_confirm.value;
+            const policyError = passwordPolicyError(password, {
+                email: form.email.value,
+                name: form.name.value,
+            });
+            if (policyError) {
+                form.password.setCustomValidity(policyError);
+                form.password.reportValidity();
+                return;
+            }
+            form.password.setCustomValidity("");
             if (password !== confirm) {
                 form.password_confirm.setCustomValidity("Passwords do not match");
                 form.password_confirm.reportValidity();
@@ -194,6 +206,7 @@
         // Clear a previous mismatch constraint once the user revises either password field.
         document.getElementById("register-form").addEventListener("input", (e) => {
             if (e.target.name === "password_confirm" || e.target.name === "password") {
+                e.target.form.password.setCustomValidity("");
                 e.target.form.password_confirm.setCustomValidity("");
             }
         });

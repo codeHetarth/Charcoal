@@ -10,7 +10,59 @@ const { Resend } = require("resend");
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
-const BCRYPT_ROUNDS = 10;
+const BCRYPT_ROUNDS = 12;
+const PASSWORD_MIN_LENGTH = 8;
+const PASSWORD_MAX_LENGTH = 128;
+const COMMON_PASSWORDS = new Set([
+  "password",
+  "password1",
+  "password12",
+  "password123",
+  "password1234",
+  "123456789012",
+  "1234567890123",
+  "qwertyuiop",
+  "qwertyuiopas",
+  "letmein1234",
+  "welcome1234",
+  "iloveyou123",
+  "admin123456",
+  "charcoal1234",
+]);
+
+function passwordPolicyError(password, { email = "", name = "" } = {}) {
+  if (typeof password !== "string" || password.length === 0) {
+    return "Password is required";
+  }
+  if (password.length < PASSWORD_MIN_LENGTH) {
+    return "Password must be at least 8 characters";
+  }
+  if (password.length > PASSWORD_MAX_LENGTH) {
+    return "Password is too long";
+  }
+
+  const lower = password.toLowerCase();
+  const emailLocal = email.trim().toLowerCase().split("@")[0];
+  if (emailLocal && emailLocal.length >= 3 && lower.includes(emailLocal)) {
+    return "Password must not contain your email";
+  }
+
+  const nameParts = name
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((part) => part.length >= 3);
+  if (nameParts.some((part) => lower.includes(part))) {
+    return "Password must not contain your name";
+  }
+
+  if (COMMON_PASSWORDS.has(lower)) {
+    return "This password is too common. Choose a stronger one";
+  }
+
+  return null;
+}
+
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // -------------------- MIDDLEWARE --------------------
@@ -90,6 +142,11 @@ app.post("/auth/register", async (req, res) => {
 
     if (!name || !email || !password) {
       return res.status(400).json({ error: "Name, email, and password are required" });
+    }
+
+    const policyError = passwordPolicyError(password, { email, name });
+    if (policyError) {
+      return res.status(400).json({ error: policyError });
     }
 
     const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
@@ -565,7 +622,30 @@ app.post("/auth/reset-password", async (req, res) => {
 
     const userId = result.rows[0].user_id;
 
-    // Hash the new password
+    const userResult = await pool.query(
+      "SELECT name, email, password_hash FROM users WHERE id = $1",
+      [userId]
+    );
+    if (userResult.rows.length === 0) {
+      return res.status(400).json({ error: "Invalid or expired reset link" });
+    }
+
+    const user = userResult.rows[0];
+    const policyError = passwordPolicyError(password, {
+      email: user.email,
+      name: user.name,
+    });
+    if (policyError) {
+      return res.status(400).json({ error: policyError });
+    }
+
+    const reused = await bcrypt.compare(password, user.password_hash);
+    if (reused) {
+      return res.status(400).json({
+        error: "New password must be different from your current password",
+      });
+    }
+
     const passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
 
     // Update user's password
