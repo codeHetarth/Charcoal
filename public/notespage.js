@@ -657,7 +657,7 @@ function exportCurrentNote() {
 
   const rawTitle = getNoteSidebarTitle(note);
   const safe = rawTitle.replace(/[/\\?%*:|"<>]/g, "_").slice(0, 80);
-  const body = `# ${note.title || ""}\n\n${note.content || ""}`;
+  const body = `${note.title || ""}\n\n${note.content || ""}`;
   const blob = new Blob([body], { type: "text/markdown;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -773,18 +773,41 @@ function isCursorAtStartOfEditor(editableEl) {
   return preRange.toString().length === 0;
 }
 
+// True when the cursor is in a heading block or ATX heading markup (#, ##, …).
+function hasHeadingCommand() {
+  if (milkdownEditor) {
+    let inHeading = false;
+    milkdownEditor.action((ctx) => {
+      const { $from } = ctx.get(editorViewCtx).state.selection;
+      inHeading =
+        $from.parent.type.name === "heading" ||
+        /^#{1,6}(\s|$)/.test($from.parent.textContent);
+    });
+    return inHeading;
+  }
+
+  const selection = window.getSelection();
+  if (!selection.rangeCount) return false;
+  let node = selection.anchorNode;
+  if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
+  if (!(node instanceof Element)) return false;
+  if (node.closest("h1, h2, h3, h4, h5, h6")) return true;
+  const block = node.closest("p, li, pre");
+  return /^#{1,6}(\s|$)/.test((block?.textContent || "").trimStart());
+}
+
 // Backspace or ArrowUp at the start of the body returns focus to the title field.
+// Use capture so a heading is still detected before Milkdown unwraps it on Backspace.
 textAreaMount.addEventListener("keydown", (e) => {
   const editable = textAreaMount.querySelector('[contenteditable="true"]');
   if (!editable) return;
 
-  if (e.key === "Backspace" || e.key === "ArrowUp") {
-    if (isCursorAtStartOfEditor(editable)) {
-      e.preventDefault();
-      noteTitle.focus();
-    }
-  }
-});
+  if (e.key !== "Backspace" && e.key !== "ArrowUp") return;
+  if (!isCursorAtStartOfEditor(editable) || hasHeadingCommand()) return;
+
+  e.preventDefault();
+  noteTitle.focus();
+}, true);
 
 // Persists the active note's title and content to the server via PUT. //
 async function saveNoteToDB() {
