@@ -657,7 +657,7 @@ function exportCurrentNote() {
 
   const rawTitle = getNoteSidebarTitle(note);
   const safe = rawTitle.replace(/[/\\?%*:|"<>]/g, "_").slice(0, 80);
-  const body = `${note.title || ""}\n\n${note.content || ""}`;
+  const body = `${note.content || ""}`;
   const blob = new Blob([body], { type: "text/markdown;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
@@ -748,63 +748,50 @@ noteTitle.addEventListener("input", () => {
   saveTimeout = setTimeout(saveNoteToDB, 200);
 });
 
-// Enter or ArrowDown from the title field moves focus into the editor body.
+// Enter or ArrowDown from the title field moves focus to the start of the editor body.
 noteTitle.addEventListener("keydown", (e) => {
-  if (e.key === "Enter" || e.key === "ArrowDown") {
-    e.preventDefault();
-    const editable = textAreaMount.querySelector('[contenteditable="true"]');
-    if (editable) editable.focus();
-  }
+  if (e.key !== "Enter" && e.key !== "ArrowDown") return;
+  e.preventDefault();
+  if (!milkdownEditor) return;
+
+  milkdownEditor.action((ctx) => {
+    const view = ctx.get(editorViewCtx);
+    const selection = TextSelection.atStart(view.state.doc);
+    view.dispatch(view.state.tr.setSelection(selection).scrollIntoView());
+    view.focus();
+  });
 });
 
-// True when the typing cursor is at the very beginning of the contenteditable editor. //
-function isCursorAtStartOfEditor(editableEl) {
-  const selection = window.getSelection();
-  if (!selection.rangeCount) return false;
-
-  const range = selection.getRangeAt(0);
-  if (!range.collapsed) return false; // has a selection, not just a cursor
-
-  // Create a range from the very start of the editable area to the cursor
-  const preRange = range.cloneRange();
-  preRange.selectNodeContents(editableEl);
-  preRange.setEnd(range.startContainer, range.startOffset);
-
-  return preRange.toString().length === 0;
+// True when the caret is at the start of the first block in the document,
+// not merely when earlier blocks are empty (DOM toString skips those).
+function isCursorAtStartOfEditor(state) {
+  const { empty, from } = state.selection;
+  if (!empty) return false;
+  return from === TextSelection.atStart(state.doc).from;
 }
 
 // True when the cursor is in a heading block or ATX heading markup (#, ##, …).
-function hasHeadingCommand() {
-  if (milkdownEditor) {
-    let inHeading = false;
-    milkdownEditor.action((ctx) => {
-      const { $from } = ctx.get(editorViewCtx).state.selection;
-      inHeading =
-        $from.parent.type.name === "heading" ||
-        /^#{1,6}(\s|$)/.test($from.parent.textContent);
-    });
-    return inHeading;
-  }
-
-  const selection = window.getSelection();
-  if (!selection.rangeCount) return false;
-  let node = selection.anchorNode;
-  if (node && node.nodeType === Node.TEXT_NODE) node = node.parentElement;
-  if (!(node instanceof Element)) return false;
-  if (node.closest("h1, h2, h3, h4, h5, h6")) return true;
-  const block = node.closest("p, li, pre");
-  return /^#{1,6}(\s|$)/.test((block?.textContent || "").trimStart());
+function hasHeadingCommand(state) {
+  const { $from } = state.selection;
+  return (
+    $from.parent.type.name === "heading" ||
+    /^#{1,6}(\s|$)/.test($from.parent.textContent)
+  );
 }
 
-// Backspace or ArrowUp at the start of the body returns focus to the title field.
+// Backspace or ArrowUp at the start of the first line returns focus to the title.
 // Use capture so a heading is still detected before Milkdown unwraps it on Backspace.
 textAreaMount.addEventListener("keydown", (e) => {
-  const editable = textAreaMount.querySelector('[contenteditable="true"]');
-  if (!editable) return;
-
   if (e.key !== "Backspace" && e.key !== "ArrowUp") return;
-  if (!isCursorAtStartOfEditor(editable) || hasHeadingCommand()) return;
+  if (!milkdownEditor) return;
 
+  let leaveToTitle = false;
+  milkdownEditor.action((ctx) => {
+    const state = ctx.get(editorViewCtx).state;
+    leaveToTitle = isCursorAtStartOfEditor(state) && !hasHeadingCommand(state);
+  });
+
+  if (!leaveToTitle) return;
   e.preventDefault();
   noteTitle.focus();
 }, true);
