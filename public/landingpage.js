@@ -39,11 +39,17 @@ const accDeleteCancelBtn = document.getElementById("accDeleteCancelBtn");
 // Collection of page sections, used to apply visibility changes in a single iteration.
 const allSections = [landingPage, aboutPage, accountPage];
 
+const landingPaths = {
+  home: "/landingpage/home",
+  about: "/landingpage/about",
+  account: "/landingpage/account",
+};
+
 /**
  * Displays the requested view by concealing all other sections,
- * updating the document hash, and resetting scroll position.
+ * updating the document path, and resetting scroll position.
  */
-function showPage(event, pageToShow, hash) {
+function showPage(event, pageToShow, path) {
   event.preventDefault();
 
   allSections.forEach((page) => {
@@ -57,7 +63,7 @@ function showPage(event, pageToShow, hash) {
     loadAccountDetails();
   }
 
-  history.pushState(null, "", hash);
+  history.pushState(null, "", path);
 
   window.scrollTo({
     top: 0,
@@ -66,31 +72,33 @@ function showPage(event, pageToShow, hash) {
 }
 
 // Bind navigation and "return home" controls to the corresponding views.
-aboutLink.addEventListener("click", (event) => showPage(event, aboutPage, "#about"));
-accountLink.addEventListener("click", (event) => showPage(event, accountPage, "#account"));
-logoLink.addEventListener("click", (event) => showPage(event, landingPage, "#home"));
+aboutLink.addEventListener("click", (event) => showPage(event, aboutPage, landingPaths.about));
+accountLink.addEventListener("click", (event) => showPage(event, accountPage, landingPaths.account));
+logoLink.addEventListener("click", (event) => showPage(event, landingPage, landingPaths.home));
 loginRegisterLink.addEventListener("click", handleLoginRegister);
-aboutBackToHome.addEventListener("click", (event) => showPage(event, landingPage, "#home"));
-accountBackToHome.addEventListener("click", (event) => showPage(event, landingPage, "#home"));
+aboutBackToHome.addEventListener("click", (event) => showPage(event, landingPage, landingPaths.home));
+accountBackToHome.addEventListener("click", (event) => showPage(event, landingPage, landingPaths.home));
 
-// Correspondence between URL fragments and their associated page sections.
-const hashToPage = {
-  "#home": landingPage,
-  "#about": aboutPage,
-  "#account": accountPage,
+// Correspondence between URL paths and their associated page sections.
+const pathToPage = {
+  home: landingPage,
+  about: aboutPage,
+  account: accountPage,
 };
 
-/** Restores the appropriate view from the current URL fragment, if one is present. */
-function showPageFromHash() {
-  const page = hashToPage[window.location.hash];
-  if (!page) return;
-  allSections.forEach((section) => section.classList.add("section-hidden"));
+/** Restores the appropriate view from the current URL path. */
+function showPageFromPath() {
+  const parts = window.location.pathname.split("/").filter(Boolean);
+  const section = parts[0] === "landingpage" ? (parts[1] || "home") : "home";
+  const page = pathToPage[section] || landingPage;
+  allSections.forEach((item) => item.classList.add("section-hidden"));
   page.classList.remove("section-hidden");
   if (page === accountPage) loadAccountDetails();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-showPageFromHash();
+showPageFromPath();
+window.addEventListener("popstate", showPageFromPath);
 
 /**
  * Resolves the Login/Register action according to session state:
@@ -107,7 +115,7 @@ async function handleLoginRegister(event) {
 
     if (res.ok) {
       // An active session was confirmed.
-      showPage(event, accountPage, "#account");
+      showPage(event, accountPage, landingPaths.account);
     } else {
       // No valid session; authentication is required.
       window.location.href = "auth.html";
@@ -120,7 +128,7 @@ async function handleLoginRegister(event) {
 }
 
 // The contact control presents the About view, which contains contact information.
-contactLink.addEventListener("click", (event) => showPage(event, aboutPage, "#aboutPage"));
+contactLink.addEventListener("click", (event) => showPage(event, aboutPage, landingPaths.about));
 
 /**
  * Retrieves the current user from the server and selects the
@@ -315,7 +323,7 @@ async function deleteAccount() {
     }
     hideAccDeleteModal();
     await loadAccountDetails();
-    showPage({ preventDefault(){} }, landingPage, "#home");
+    showPage({ preventDefault(){} }, landingPage, landingPaths.home);
   } catch (err) {
     console.error("Delete account error:", err);
   }

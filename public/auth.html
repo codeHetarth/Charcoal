@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <base href="/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login/Register</title>
     <link rel="stylesheet" href="auth.css">
@@ -30,7 +31,7 @@
             </div>
 
             <div class="auth-div3">
-                <p>New here? <a href="#" id="show-register">Register</a></p>
+                <p>New here? <a href="/auth/register" id="show-register">Register</a></p>
             </div>
         </div>
 
@@ -74,7 +75,7 @@
             </div>
 
             <div class="auth-div3">
-                <p>Already have an account? <a href="#" id="show-login">Login</a></p>
+                <p>Already have an account? <a href="/auth/login" id="show-login">Login</a></p>
             </div>
         </div>
     </section>
@@ -97,33 +98,36 @@
             registerView.classList.remove("hidden");
         }
 
-        // Switching to login, updates the fragment identifier without reloading the document.
+        function showAuthFromPath() {
+            if (window.location.pathname.endsWith("/register")) {
+                showRegister();
+            } else {
+                showLogin();
+            }
+        }
+
+        // Switching to login records the active view in the path without reloading.
         document.getElementById("show-login").addEventListener("click", (e) => {
             e.preventDefault();
             showLogin();
-            window.history.replaceState(null, "", "auth.html#Login");
+            window.history.pushState(null, "", "/auth/login");
         });
 
-        // Switching to registration likewise records the active view in the URL.
+        // Switching to registration likewise records the active view in the path.
         document.getElementById("show-register").addEventListener("click", (e) => {
             e.preventDefault();
             showRegister();
-            window.history.replaceState(null, "", "auth.html#Register");
+            window.history.pushState(null, "", "/auth/register");
         });
 
-        // On initial load, restore the view indicated by the URL fragment.
-        if (window.location.hash === "#Register") {
-            showRegister();
-        }
-        else {
-            showLogin();
-        }
+        showAuthFromPath();
+        window.addEventListener("popstate", showAuthFromPath);
 
         // If a session already exists, skip login/register and go to Account.
         fetch("/auth/me", { credentials: "include" })
             .then((res) => {
                 if (res.ok) {
-                    window.location.replace("/landingpage.html#account");
+                    window.location.replace("/landingpage/account");
                 }
             })
             .catch(() => {});

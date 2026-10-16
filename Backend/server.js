@@ -273,8 +273,48 @@ app.get("/auth/me", async (req, res) => {
 // -------------------- NOTES ROUTES --------------------
 
 app.get("/", (req, res) => {
-  res.redirect("/landingpage.html");
+  res.redirect("/landingpage/home");
 });
+
+app.get(["/landingpage", "/landingpage.html"], (req, res) => {
+  res.redirect("/landingpage/home");
+});
+
+app.get("/landingpage/:section", (req, res, next) => {
+  const allowed = new Set(["home", "about", "account"]);
+  if (!allowed.has(req.params.section)) return next();
+  res.sendFile(path.resolve(__dirname, "..", "public", "landingpage.html"));
+});
+
+function sendPublicPage(res, filename) {
+  res.sendFile(path.resolve(__dirname, "..", "public", filename));
+}
+
+app.get("/notespage.html", (req, res) => res.redirect("/notespage"));
+app.get("/notespage", (req, res) => sendPublicPage(res, "notespage.html"));
+
+app.get(["/auth", "/auth.html"], (req, res) => res.redirect("/auth/login"));
+app.get(["/auth/login", "/auth/register"], (req, res) => sendPublicPage(res, "auth.html"));
+
+app.get("/forgotpassword.html", (req, res) => res.redirect("/forgotpassword"));
+app.get("/forgotpassword", (req, res) => sendPublicPage(res, "forgotpassword.html"));
+
+app.get("/resetpassword.html", (req, res) => {
+  const query = req.originalUrl.includes("?")
+    ? req.originalUrl.slice(req.originalUrl.indexOf("?"))
+    : "";
+  res.redirect("/resetpassword" + query);
+});
+app.get("/resetpassword", (req, res) => sendPublicPage(res, "resetpassword.html"));
+
+app.get("/privacy.html", (req, res) => res.redirect("/privacy"));
+app.get("/privacy", (req, res) => sendPublicPage(res, "privacy.html"));
+
+app.get("/terms.html", (req, res) => res.redirect("/terms"));
+app.get("/terms", (req, res) => sendPublicPage(res, "terms.html"));
+
+app.get("/legal.html", (req, res) => res.redirect("/legal"));
+app.get("/legal", (req, res) => sendPublicPage(res, "legal.html"));
 
 app.get("/notes/mode", (req, res) => {
   res.json({ mode: isLoggedIn(req) ? "account" : "guest" });

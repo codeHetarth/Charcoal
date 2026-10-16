@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Charcoal</title>
   <!-- Standard icon (browser tab) -->
@@ -24,7 +25,7 @@
     <nav class="navbar">
       <!-- Left side of the navigation bar of the webpage -->
       <div>
-        <a class="logo" id="logoLink">
+        <a class="logo" id="logoLink" href="/landingpage/home">
               <img src="Logo.png">
               <span>Charcoal</span>
         </a>
@@ -32,8 +33,8 @@
       
       <!-- Right side of the navigation bar of the webpage -->
       <ul class="menu">
-        <li><a href="landingpage.html#about" id="aboutLink">About Us</a></li>
-        <li><a href="landingpage.html#account" id="accountLink">Account</a></li>
+        <li><a href="/landingpage/about" id="aboutLink">About Us</a></li>
+        <li><a href="/landingpage/account" id="accountLink">Account</a></li>
       </ul>                
     </nav>
   </header>
@@ -108,7 +109,7 @@
             <!-- Link to the notes page at the end of the webpage -->
             <a href="notespage.html"><b>Start writing →</b></a>
             <!-- Link to redirect to the registration and login page if required -->
-            <a href="#account" id="loginRegisterLink"><b>Login / Register</b></a>
+            <a href="/landingpage/account" id="loginRegisterLink"><b>Login / Register</b></a>
           </div>
           <!-- Section 3 Division 2 Division 1 ends -->  
         </div>
@@ -156,7 +157,7 @@
       <div>
         <a href="notespage.html" class="optionBtns">Start writing →</a>
       </div>
-      <a href="#home" class="optionBtns" id="aboutBackToHome">Back to Home</a>
+      <a href="/landingpage/home" class="optionBtns" id="aboutBackToHome">Back to Home</a>
     </section>
     <!-- Section for About Page ends -->
 
@@ -236,7 +237,7 @@
           
       
       </div>
-      <a href="#home" class="optionBtns" id="accountBackToHome">Back to Home</a>
+      <a href="/landingpage/home" class="optionBtns" id="accountBackToHome">Back to Home</a>
     </section>
     <!-- Section for Account Page ends -->
 
@@ -248,7 +249,7 @@
     <div class="footer-div">
       <a href="privacy.html" >Privacy Policy</a>
       <a href="terms.html" >Terms of Service</a>
-      <a href="landingpage.html#about" id="contactLink">Contact Us</a>
+      <a href="/landingpage/about" id="contactLink">Contact Us</a>
     </div>
 
     <!-- To seperate the division on the right of the footer-->
