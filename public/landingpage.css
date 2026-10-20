@@ -54,12 +54,17 @@ body {
   }
 
 .logo img {
-  width: 38px; height: 38px;
-  object-fit: cover;      /* crops the tall photo to a square */
+  width: 38px; 
+  height: 38px;
+  object-fit: cover;
   border-radius: 6px;
   display: block;
 }
-.logo span { font-weight: 700; letter-spacing: 0.5px; color: #fff; }
+.logo span { 
+  font-weight: 700; 
+  letter-spacing: 0.5px; 
+  color: #fff; 
+}
 
 /* Navbar right-part settings start from here */
 .menu {
