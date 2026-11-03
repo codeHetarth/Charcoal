@@ -431,16 +431,221 @@ a.optionBtns:hover {
   background-color: #002A00;
 }
 
-/* The welcome picture */
-.home-img {
-  display: block;
-  text-align: center;
-  max-width: 100%;
-  max-height: 100%;
-  border-color: #42464b;
-  border-style: solid;
+.demo-window {
+  display: flex;
+  width: 90%;
+  height: 480px;
+  margin: 24px auto 0;
+  border: 2px solid #42464b;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #121212;
+  text-align: left;
+}
+
+.demo-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  background: #181818;
+  display: flex;
+  flex-direction: column;
+}
+
+.demo-sidebar-top,
+.demo-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+}
+
+.demo-brand, .demo-plus { 
+  font-weight: 700;
+  cursor: pointer;
+  padding: 10px 12px;
+}
+
+.demo-plus {
   border-radius: 5px;
-  border-width: 2px;
+  text-align: right;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 8px 16px;
+}
+
+.demo-plus:hover {
+  background-color: #42464B;
+}
+
+.demo-notes {
+  list-style: none;
+  padding: 10px 12px;
+}
+
+.demo-notes li {
+  border-radius: 6px;
+  padding: 10px 12px;
+}
+
+.demo-notes li:hover {
+  background: #222222;
+  cursor: pointer;
+}
+
+.demo-note-selected { background: #333333; }
+
+.demo-editor {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.demo-toolbar-deleteBtn,
+.demo-toolbar-exportBtn,
+.demo-toolbar-accountBtn {
+  padding: 10px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.demo-toolbar-deleteBtn:hover,
+.demo-toolbar-exportBtn:hover,
+.demo-toolbar-accountBtn:hover {
+  background-color: #42464B;
+}
+
+.demo-body {
+  flex: 1;
+  overflow: auto;
+  padding: 8px 28px 24px;
+  outline: none;
+  cursor: text;
+}
+
+.demo-body h2 { font-size: 22px; margin-bottom: 16px; }
+.demo-body h3 { font-size: 18px; margin: 12px 0; }
+.demo-body ul { padding-left: 20px; }
+.demo-body p { margin-top: 12px; }
+
+.demo-inline-code {
+  background: #333333;
+  border-radius: 4px;
+  padding: 0 4px;
+}
+
+.demo-toast {
+  position: absolute;
+  top: 72px;
+  left: 430px;
+  z-index: 2;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  background: #f4f1ea;
+  color: #1a1a1a;
+  border-radius: 14px;
+  padding: 12px 18px;
+  min-width: 210px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+.demo-toast:hover {
+  background: #42464B;
+}
+
+.demo-toast-icon {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.demo-toast-copy {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  font-size: 14px;
+}
+
+/* Cropped view of the same window, kept beside each heading. */
+.demo-shot {
+  width: 45%;
+  max-width: 500px;
+  height: 320px;
+  margin: 0;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid #42464b;
+  border-radius: 8px;
+  background: #121212;
+}
+
+.demo-shot .demo-window {
+  width: 900px;
+  height: 520px;
+  max-width: none;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+
+.demo-shot .demo-sidebar {
+  width: 300px;
+}
+
+/* Manage Notes: sidebar and the selected note fill the frame. */
+.demo-shot-sidebar .demo-window {
+  transform: scale(0.84);
+  transform-origin: left top;
+}
+
+.demo-shot-sidebar .demo-sidebar {
+  width: 280px;
+}
+
+/* Write Notes: the note text fills the frame. */
+.demo-shot-text .demo-window {
+  width: 760px;
+  transform: scale(0.82) translate(-270px, 0);
+  transform-origin: left top;
+}
+
+.demo-shot-text .demo-body {
+  font-size: 20px;
+}
+
+.demo-shot-text .demo-body h2 {
+  font-size: 30px;
+}
+
+.demo-shot-text .demo-body h3 {
+  font-size: 24px;
+}
+
+/* Export Notes: the downloaded file sits in the middle of the frame. */
+.demo-shot-file .demo-window {
+  transform: scale(1.05) translate(-360px, -20px);
+  transform-origin: left top;
+}
+
+.demo-shot-file .demo-toast {
+  left: 300px ;
+  top: 68px;
+}
+
+.demo-shot-file .demo-body {
+  font-size: 20px;
+}
+
+.demo-shot-file .demo-body h2 {
+  font-size: 36px;
+}
+
+.demo-shot-file .demo-body h3 {
+  font-size: 28px;
 }
 
 /* Section 2, images of the Web application features */
@@ -476,18 +681,6 @@ a.optionBtns:hover {
   text-align: left;
 }
 
-.manage-notes-img,
-.write-notes-img,
-.export-notes-img {
-  width: 45%;
-  max-width: 500px;
-  height: auto;
-  display: block;
-  border-color: #42464b;
-  border-style: solid;
-  border-radius: 5px;
-  border-width: 2px;
-}
 
 /* Section 3, final message, Start writing button and Login/Register button */
 .section3-div2 {
@@ -599,9 +792,7 @@ align-items: center;
     font-size: 18px;
   }
 
-  .manage-notes-img,
-  .write-notes-img,
-  .export-notes-img {
+  .demo-shot {
     width: 48%;
   }
 
@@ -707,11 +898,10 @@ align-items: center;
     gap: 16px;
   }
 
-  .manage-notes-img,
-  .write-notes-img,
-  .export-notes-img {
+  .demo-shot {
     width: 100%;
     max-width: 100%;
+    height: 360px;
   }
 
   .section3-div2 {
