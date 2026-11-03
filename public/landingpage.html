@@ -327,12 +327,17 @@
                 title="Enter a valid email address, e.g. name@example.com"></input>
         </div>
 
+        <div class="account-personal-info">
+          <p><strong>Current password :</strong></p>
+          <input type="password" id="accountCurrentPassword" class="account-input" autocomplete="current-password" placeholder="Required only to change your email">
+        </div>
+
         <p id="saveError" class="save-error hidden"></p> <!-- Error message for saving changes -->
         <button id="saveBtn" class="save-btn">Save Changes</button> <!-- Button to save changes -->
 
         <div id="saveModal" class="save-modal"> <!-- Modal to show the success message for saving changes -->
           <div class="save-modal-dialog">
-            <p>Your account changes have been saved successfully.</p> <!-- Success message for saving changes -->
+            <p id="saveModalText">Your account changes have been saved successfully.</p>
             <button id="okBtn" class="save-modal-ok-btn">OK</button>
           </div>
         </div>
@@ -364,6 +369,8 @@
               <p class="acc-delete-modal-text">
                 After your account is deleted, you will be redirected to the homepage.
               </p>
+              <input type="password" id="accDeletePassword" class="account-input" autocomplete="current-password" placeholder="Current password">
+              <p id="accDeleteError" class="save-error hidden"></p>
               <div class="acc-delete-modal-actions">
                 <button type="button" class="acc-delete-modal-btn acc-delete-modal-cancel" id="accDeleteCancelBtn">Cancel</button>
                 <button type="button" class="acc-delete-modal-btn acc-delete-modal-confirm" id="accDeleteConfirmBtn">Confirm</button>

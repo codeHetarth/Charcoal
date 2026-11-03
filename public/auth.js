@@ -49,6 +49,14 @@ fetch("/auth/me", { credentials: "include" })
     .catch(() => {});
 
 const authError = document.getElementById("auth-error");
+const authNotice = document.getElementById("auth-notice");
+
+const verifiedMessages = {
+    "1": "Email confirmed. You can sign in.",
+    email: "Email updated. Sign in with your new email address.",
+    invalid: "This confirmation link is invalid or has expired.",
+    taken: "That email address is already in use.",
+};
 
 // Displays a server- or client-side error within the shared alert region. //
 function showAuthError(message) {
@@ -62,6 +70,25 @@ function clearAuthError() {
     if (!authError) return;
     authError.textContent = "";
     authError.classList.add("hidden");
+}
+
+function showAuthNotice(message) {
+    if (!authNotice) return;
+    authNotice.textContent = message;
+    authNotice.classList.remove("hidden");
+}
+
+function clearAuthNotice() {
+    if (!authNotice) return;
+    authNotice.textContent = "";
+    authNotice.classList.add("hidden");
+}
+
+const verified = new URLSearchParams(window.location.search).get("verified");
+if (verified === "1" || verified === "email") {
+    showAuthNotice(verifiedMessages[verified]);
+} else if (verifiedMessages[verified]) {
+    showAuthError(verifiedMessages[verified]);
 }
 
 /**
@@ -86,6 +113,7 @@ async function postAuth(url, body) {
 document.getElementById("login-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     clearAuthError();
+    clearAuthNotice();
     const form = e.target;
     try {
         await postAuth("/auth/login", {
@@ -102,6 +130,7 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
 document.getElementById("register-form").addEventListener("submit", async (e) => {
     e.preventDefault();
     clearAuthError();
+    clearAuthNotice();
     const form = e.target;
     const password = form.password.value;
     const confirm = form.password_confirm.value;
@@ -122,11 +151,15 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
     }
     form.password_confirm.setCustomValidity("");
     try {
-        await postAuth("/auth/register", {
+        const created = await postAuth("/auth/register", {
             name: form.name.value,
             email: form.email.value,
             password,
         });
+        if (created.needsVerification) {
+            showAuthNotice("Check your email to confirm your account. The link expires in 24 hours.");
+            return;
+        }
         window.location.href = "/notespage.html";
     } catch (err) {
         showAuthError(err.message);

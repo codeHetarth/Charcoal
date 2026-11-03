@@ -18,17 +18,29 @@ forgotPasswordForm.addEventListener("submit", async (event) => {
         body: JSON.stringify({ email })
     });
 
-    document.getElementById("forgot-password-view").innerHTML = `
-        <div class="forgot-password-email">
-            <h1>Check your email</h1>
-            <p>
-                If an account exists for <strong>${email}</strong>,
-                a password reset link has been sent to your email.
-            </p>
-        </div>
+    const view = document.getElementById("forgot-password-view");
+    view.replaceChildren();
 
-        <div class="forgot-password-div3">
-            <a href="auth.html">Back to Login</a>
-        </div>
-    `;
+    const message = document.createElement("div");
+    message.className = "forgot-password-email";
+    const heading = document.createElement("h1");
+    heading.textContent = "Check your email";
+    const paragraph = document.createElement("p");
+    const address = document.createElement("strong");
+    address.textContent = email;
+    paragraph.append(
+        "If an account exists for ",
+        address,
+        ", a password reset link has been sent to your email."
+    );
+    message.append(heading, paragraph);
+
+    const back = document.createElement("div");
+    back.className = "forgot-password-div3";
+    const loginLink = document.createElement("a");
+    loginLink.href = "auth.html";
+    loginLink.textContent = "Back to Login";
+    back.append(loginLink);
+
+    view.append(message, back);
 });

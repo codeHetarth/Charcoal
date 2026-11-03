@@ -4,7 +4,7 @@ Charcoal is a browser-based markdown note application developed as part of a uni
 
 ## Functionality
 
-Charcoal provides a guest mode to store notes temporarily, only for the current browser session; they are discarded when the browser is closed. Instead, to store notes permanently, users can register with an account(email and password) and keep their notes in the database, attached to their account.
+Charcoal provides a guest mode to store notes temporarily. The browser drops them when it closes, and the server deletes its copy within 24 hours. To store notes permanently, users can register with an account (email and password) and keep their notes in the database, attached to their account.
 
 The navbar on the home page provides direction to the About section of the web application and Account section to show and change user details. In addition, the footer provides contact details and documents, namely- Privacy policy, Terms of service, and Legal notice for Charcoal related information.
 
@@ -74,7 +74,11 @@ PGPORT=5432
 RESEND_API_KEY=
 ```
 
-`RESEND_API_KEY` is required for the welcome, password-reset and account-deletion emails. If the KEY configuration is omitted, the email service will fail; but the rest of the application will run as programmed.
+`RESEND_API_KEY` is required for confirmation, welcome, password-reset, and account-deletion emails. When it is set, a new account cannot sign in until the address is confirmed from the email. If the key is omitted, accounts are created and signed in immediately, and email features are skipped.
+
+`SESSION_SECRET` must be set when `NODE_ENV=production`. Optional `APP_BASE_URL` (for example `https://notes.example.com`) is used in email links. When it is omitted, links use `http://localhost:<PORT>`.
+
+Guest notes are browser-session cookies. The server deletes them within 24 hours, and each guest session is limited to 50 notes and 256 KB. Signed-in notes are limited to 500 per account.
 
 In PostgreSQL:
 
@@ -89,7 +93,8 @@ CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
-  password_hash TEXT NOT NULL
+  password_hash TEXT NOT NULL,
+  email_verified BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE notes (
@@ -102,6 +107,13 @@ CREATE TABLE notes (
 CREATE TABLE password_reset_tokens (
   user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   token_hash TEXT NOT NULL,
+  expires_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE email_verification_tokens (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  token_hash TEXT NOT NULL,
+  pending_email TEXT,
   expires_at TIMESTAMPTZ NOT NULL
 );
 ```
@@ -140,15 +152,16 @@ Authenticated requests send the session cookie (`credentials: include`).
 
 | Method | Path | Description |
 | --- | --- | --- |
-| `POST` | `/auth/register` | Create an account and sign in |
-| `POST` | `/auth/login` | Sign in |
+| `POST` | `/auth/register` | Create an account. Signs in immediately when email delivery is off; otherwise sends a confirmation link |
+| `GET` | `/verify-email` | Confirm an address from the emailed link |
+| `POST` | `/auth/login` | Sign in. Issues a new session id |
 | `POST` | `/auth/logout` | Sign out |
 | `GET` | `/auth/me` | Current user |
-| `PUT` | `/auth/me` | Update name and email |
-| `DELETE` | `/auth/me` | Delete the account and its notes |
+| `PUT` | `/auth/me` | Update name and email. Changing email requires the current password |
+| `DELETE` | `/auth/me` | Delete the account and its notes. Requires the current password |
 | `POST` | `/auth/forgot-password` | Request a reset email |
 | `GET` | `/auth/verify-reset-token` | Validate a reset token |
-| `POST` | `/auth/reset-password` | Set a new password |
+| `POST` | `/auth/reset-password` | Set a new password and sign out every existing session |
 
 ### Notes
 
@@ -160,7 +173,7 @@ Authenticated requests send the session cookie (`credentials: include`).
 | `PUT` | `/notes/:id` | Update a note |
 | `DELETE` | `/notes/:id` | Delete a note |
 
-Notes for signed-in users are stored in PostgreSQL, whereas, the guest notes are stored on the session and use negative identifiers.
+Notes for signed-in users are stored in PostgreSQL, whereas guest notes are stored on the session and use negative identifiers. A password reset ends every existing session for that account. An existing database picks up `email_verified` and `email_verification_tokens` the next time the server starts; accounts already in the database are treated as verified.
 
 ## Documents
 

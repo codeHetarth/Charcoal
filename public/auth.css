@@ -136,8 +136,18 @@ body {
   font-size: 14px;
 }
 
-.auth-error.hidden {
+.auth-error.hidden,
+.auth-notice.hidden {
   display: none;
+}
+
+.auth-notice {
+  margin-bottom: 16px;
+  padding: 12px;
+  border-radius: 5px;
+  background: #14301c;
+  color: #b7f0c4;
+  font-size: 14px;
 }
 
 /* Conceals the inactive login or registration view. */

@@ -19,6 +19,8 @@ const accountLoggedOut = document.getElementById("accountLoggedOut");
 const accountLoggedIn = document.getElementById("accountLoggedIn");
 const accountName = document.getElementById("accountName");
 const accountEmail = document.getElementById("accountEmail");
+const accountCurrentPassword = document.getElementById("accountCurrentPassword");
+let accountEmailOnFile = "";
 const accLogoutBtn = document.getElementById("accLogoutBtn");
 const accLogoutModal = document.getElementById("accLogoutModal");
 const accLogoutConfirmBtn = document.getElementById("accLogoutConfirmBtn");
@@ -149,6 +151,7 @@ async function loadAccountDetails() {
     const user = await res.json();
     if (accountName) accountName.value = user.name;
     if (accountEmail) accountEmail.value = user.email;
+    accountEmailOnFile = user.email || "";
     accountLoggedOut.classList.add("account-panel-hidden");
     accountLoggedIn.classList.remove("account-panel-hidden");
   } catch {
@@ -214,6 +217,8 @@ async function saveAccountChanges() {
 
   const name = accountName ? accountName.value.trim() : "";
   const email = accountEmail ? accountEmail.value.trim() : "";
+  const emailChanged = email !== accountEmailOnFile;
+  const currentPassword = accountCurrentPassword ? accountCurrentPassword.value : "";
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
   // Both identifiers are mandatory prior to any network request.
@@ -233,6 +238,14 @@ async function saveAccountChanges() {
     return;
   }
 
+  if (emailChanged && !currentPassword) {
+    if (saveError) {
+      saveError.textContent = "Enter your current password to change your email.";
+      saveError.classList.remove("hidden");
+    }
+    return;
+  }
+
   saveBtn.disabled = true;
   const originalText = saveBtn.textContent;
   saveBtn.textContent = "Saving...";
@@ -243,7 +256,11 @@ async function saveAccountChanges() {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ name, email }),
+      body: JSON.stringify({
+        name,
+        email,
+        ...(emailChanged ? { currentPassword } : {}),
+      }),
     });
 
     if (!res.ok) {
@@ -258,6 +275,15 @@ async function saveAccountChanges() {
     const user = await res.json();
     if (accountName) accountName.value = user.name;
     if (accountEmail) accountEmail.value = user.email;
+    accountEmailOnFile = user.email || accountEmailOnFile;
+    if (accountCurrentPassword) accountCurrentPassword.value = "";
+
+    const saveModalText = document.getElementById("saveModalText");
+    if (saveModalText) {
+      saveModalText.textContent = user.pendingEmail
+        ? `Check ${user.pendingEmail} to confirm your new email. Until you confirm it, sign in with ${user.email}.`
+        : "Your account changes have been saved successfully.";
+    }
 
     saveModal.style.display = "flex";
   } catch (err) {
@@ -315,11 +341,33 @@ document.addEventListener("keydown", (e) => {
  * returns the interface to the landing view.
  */
 async function deleteAccount() {
+  const deleteError = document.getElementById("accDeleteError");
+  const currentPassword = document.getElementById("accDeletePassword")?.value || "";
+  if (deleteError) {
+    deleteError.textContent = "";
+    deleteError.classList.add("hidden");
+  }
+  if (!currentPassword) {
+    if (deleteError) {
+      deleteError.textContent = "Enter your current password to delete this account.";
+      deleteError.classList.remove("hidden");
+    }
+    return;
+  }
   try {
-    const res = await fetch("/auth/me", { method: "DELETE", credentials: "include" });
+    const res = await fetch("/auth/me", {
+      method: "DELETE",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ currentPassword }),
+    });
     if (!res.ok) {
-      console.error("Failed to delete account:", res.status);
-      return; // Retain the dialogue; do not redirect on failure.
+      const data = await res.json().catch(() => ({}));
+      if (deleteError) {
+        deleteError.textContent = data.error || "Could not delete the account.";
+        deleteError.classList.remove("hidden");
+      }
+      return;
     }
     hideAccDeleteModal();
     await loadAccountDetails();
