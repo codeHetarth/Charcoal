@@ -409,18 +409,14 @@ body {
   margin: 0 0 8px;
   font-size: 20px;
   font-weight: 600;
-}
-
-.delete-modal-text {
-  margin: 0 0 24px;
-  font-size: 15px;
-  color: #aaa;
+  text-align: center;
+  margin-bottom: 24px;
 }
 
 .delete-modal-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+  justify-content: center;
+  gap: 30px;
 }
 
 .delete-modal-btn {

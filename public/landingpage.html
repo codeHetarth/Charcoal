@@ -364,13 +364,13 @@
               <h2 class="acc-delete-modal-title" id="accDeleteModalTitle">Delete this Account ?</h2>
               <p class="acc-delete-modal-text">This action cannot be undone.</p>
               <p class="acc-delete-modal-text">
-                If you click <strong>'Confirm'</strong> or press <strong>'Enter key'</strong>, your account will be permanently deleted.
+                Enter your current password and click <strong>'Confirm'</strong> or press <strong>'Enter key'</strong>, your account will be permanently deleted.
               </p>
+              <input type="password" id="accDeletePassword" class="account-delete-input" autocomplete="current-password" placeholder="Current password">
+              <p id="accDeleteError" class="save-error hidden"></p>
               <p class="acc-delete-modal-text">
                 After your account is deleted, you will be redirected to the homepage.
               </p>
-              <input type="password" id="accDeletePassword" class="account-input" autocomplete="current-password" placeholder="Current password">
-              <p id="accDeleteError" class="save-error hidden"></p>
               <div class="acc-delete-modal-actions">
                 <button type="button" class="acc-delete-modal-btn acc-delete-modal-cancel" id="accDeleteCancelBtn">Cancel</button>
                 <button type="button" class="acc-delete-modal-btn acc-delete-modal-confirm" id="accDeleteConfirmBtn">Confirm</button>

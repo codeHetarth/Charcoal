@@ -353,6 +353,7 @@ body {
   border-radius: 10px;
   background: #222;
   border: 1px solid #333;
+  text-align: center;
 }
 
 .acc-delete-modal-title {
@@ -367,10 +368,19 @@ body {
   color: #aaa;
 }
 
+.account-delete-input {
+  width: 100%;
+  padding: 10px 25px;
+  font-size: 16px;
+  background-color: #fff;
+  border: 1px solid;
+  border-radius: 6px;
+}
+
 .acc-delete-modal-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 12px;
+  justify-content: center;
+  gap: 30px;
 }
 
 .acc-delete-modal-btn {
