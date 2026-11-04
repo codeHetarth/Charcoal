@@ -1,13 +1,13 @@
 // Milkdown editor core, CommonMark/GFM presets, theme, and supporting plugins.
 import { Editor, rootCtx, defaultValueCtx, editorViewCtx, editorViewOptionsCtx } from "@milkdown/core";
-import { commonmark, linkSchema } from "@milkdown/preset-commonmark";
-import { gfm } from "@milkdown/preset-gfm";
+import { bulletListSchema, commonmark, linkSchema, orderedListSchema } from "@milkdown/preset-commonmark";
+import { extendListItemSchemaForTask, gfm } from "@milkdown/preset-gfm";
 import { nord } from "@milkdown/theme-nord";
 import { listener, listenerCtx } from "@milkdown/plugin-listener";
 import { prism } from "@milkdown/plugin-prism";
 import { history } from "@milkdown/plugin-history";
 import { clipboard } from "@milkdown/plugin-clipboard";
-import { $prose } from "@milkdown/utils";
+import { $prose, getMarkdown, replaceAll } from "@milkdown/utils";
 import { Plugin, PluginKey, TextSelection } from "@milkdown/prose/state";
 
 
@@ -16,9 +16,12 @@ const plusBtn = document.getElementById("plusBtn");
 const noNotesSpace = document.getElementById("noNotesSpace");
 const noteList = document.getElementById("noteList");
 const noteTitle = document.getElementById("noteTitle");
+const codeArea = document.getElementById("codeArea");
 const textAreaMount = document.getElementById("textArea");
 const deleteBtn = document.getElementById("deleteBtn");
 const exportBtn = document.getElementById("exportBtn");
+const codeViewBtn = document.getElementById("codeViewBtn");
+const previewViewBtn = document.getElementById("previewViewBtn");
 const deleteModal = document.getElementById("deleteModal");
 const deleteConfirmBtn = document.getElementById("deleteConfirmBtn");
 const deleteCancelBtn = document.getElementById("deleteCancelBtn");
@@ -34,8 +37,13 @@ let notes = [];
 let currentNoteId = null;
 let milkdownEditor = null;
 
-// Debounce handle so successive keystrokes result in a single persistence request.
+// Debounce handles so successive keystrokes result in a single save and a single preview update.
 let saveTimeout = null;
+let previewSyncTimeout = null;
+// Greater than zero while markdown from the code pane is being applied to the preview.
+let codeToPreviewDepth = 0;
+// "preview" shows the rendered note. "code" shows the markdown source.
+let editorMode = "preview";
 
 const guestBanner = document.getElementById("guestBanner");
 
@@ -243,9 +251,47 @@ function convertMarkdownLinks(state) {
   return tr.setStoredMarks([]);
 }
 
+// Milkdown writes the list spread flag as "true" or "false", while the schema
+// requires a boolean. Accept both so lists survive parsing into the preview.
+function allowStringSpread(prev) {
+  return (ctx) => {
+    const base = prev(ctx);
+    return {
+      ...base,
+      attrs: {
+        ...base.attrs,
+        spread: {
+          ...base.attrs.spread,
+          validate(value) {
+            if (typeof value === "boolean" || value === "true" || value === "false") return;
+            throw new RangeError("Invalid spread value");
+          }
+        }
+      }
+    };
+  };
+}
+
+const looseBulletList = bulletListSchema.extendSchema(allowStringSpread);
+const looseOrderedList = orderedListSchema.extendSchema(allowStringSpread);
+const looseTaskListItem = extendListItemSchemaForTask.extendSchema(allowStringSpread);
+
 // CommonMark without the default inclusive link mark; a non-inclusive variant is supplied below.
+// List schemas are replaced by the spread-tolerant versions.
 const commonmarkWithoutLink = commonmark.filter(
-  (plugin) => plugin !== linkSchema.ctx && plugin !== linkSchema.mark
+  (plugin) =>
+    plugin !== linkSchema.ctx &&
+    plugin !== linkSchema.mark &&
+    plugin !== bulletListSchema.ctx &&
+    plugin !== bulletListSchema.node &&
+    plugin !== orderedListSchema.ctx &&
+    plugin !== orderedListSchema.node
+);
+
+const gfmWithoutTaskList = gfm.filter(
+  (plugin) =>
+    plugin !== extendListItemSchemaForTask.ctx &&
+    plugin !== extendListItemSchemaForTask.node
 );
 
 const nonInclusiveLink = linkSchema.extendSchema((prev) => (ctx) => ({
@@ -369,6 +415,9 @@ const linkBehaviorPlugin = $prose(() => {
 
 // Destroys any existing editor and mounts a new Milkdown instance with the given markdown. //
 async function createEditor(content) {
+  clearPreviewSync();
+  const loadedContent = normalizeNoteContent(content || "");
+
   if (milkdownEditor) {
     await milkdownEditor.destroy();
   }
@@ -401,8 +450,11 @@ async function createEditor(content) {
       })
       .config(nord)
       .use(commonmarkWithoutLink)
+      .use(looseBulletList)
+      .use(looseOrderedList)
       .use(nonInclusiveLink)
-      .use(gfm)
+      .use(gfmWithoutTaskList)
+      .use(looseTaskListItem)
       .use(history)
       .use(prism)
       .use(clipboard)
@@ -415,6 +467,10 @@ async function createEditor(content) {
       const unwrapped = unwrapEmptyCodeBlocks(view.state, { all: true });
       if (unwrapped) view.dispatch(unwrapped.setMeta("CHARCOAL_LINKS", true));
     });
+
+    if (codeArea && codeArea.value !== loadedContent) {
+      schedulePreviewSync(codeArea.value);
+    }
   } catch (err) {
     console.error("Create editor error:", err);
     milkdownEditor = null;
@@ -422,16 +478,101 @@ async function createEditor(content) {
 }
 
 // Records markdown changes on the active note and schedules a debounced save. //
-function onEditorContentChange(markdown) {
+function updateNoteContent(markdown) {
   if (currentNoteId == null) return;
 
   const note = notes.find((n) => n.id == currentNoteId);
-  if (!note) return;
+  if (!note || note.content === markdown) return;
 
   note.content = markdown;
 
   clearTimeout(saveTimeout);
   saveTimeout = setTimeout(saveNoteToDB, 200);
+}
+
+// Copies preview markdown into the code pane without moving its scroll position. //
+function setCodeSource(markdown) {
+  if (!codeArea || codeArea.value === markdown) return;
+  const scrollTop = codeArea.scrollTop;
+  codeArea.value = markdown;
+  codeArea.scrollTop = scrollTop;
+}
+
+// Cancels a preview update that has not run yet. //
+function clearPreviewSync() {
+  clearTimeout(previewSyncTimeout);
+  previewSyncTimeout = null;
+}
+
+// Pushes markdown into the Milkdown preview immediately. //
+function applyCodeToPreview(markdown) {
+  if (!milkdownEditor) return;
+
+  codeToPreviewDepth += 1;
+  try {
+    const scrollTop = textAreaMount ? textAreaMount.scrollTop : 0;
+    milkdownEditor.action(replaceAll(markdown, true));
+    if (textAreaMount) textAreaMount.scrollTop = scrollTop;
+  } catch (err) {
+    console.error("Preview sync error:", err);
+  } finally {
+    setTimeout(() => {
+      codeToPreviewDepth = Math.max(0, codeToPreviewDepth - 1);
+    }, 0);
+  }
+}
+
+// Pushes the code pane's markdown into the Milkdown preview. //
+function schedulePreviewSync(markdown) {
+  const noteId = currentNoteId;
+  clearPreviewSync();
+  previewSyncTimeout = setTimeout(() => {
+    if (noteId !== currentNoteId) return;
+    applyCodeToPreview(markdown);
+  }, 50);
+}
+
+// Shows either the markdown source or the rendered note, and highlights the active choice. //
+function setEditorMode(mode) {
+  editorMode = mode === "code" ? "code" : "preview";
+  const showingCode = editorMode === "code";
+  textDiv?.classList.toggle("show-code", showingCode);
+  codeViewBtn?.classList.toggle("is-active", showingCode);
+  previewViewBtn?.classList.toggle("is-active", !showingCode);
+  codeViewBtn?.setAttribute("aria-pressed", showingCode ? "true" : "false");
+  previewViewBtn?.setAttribute("aria-pressed", showingCode ? "false" : "true");
+}
+
+// Reads the formatted note back into the code pane, then shows the source. //
+function showCodeView() {
+  if (milkdownEditor && codeArea) {
+    try {
+      const markdown = milkdownEditor.action(getMarkdown());
+      setCodeSource(markdown);
+      updateNoteContent(markdown);
+    } catch (err) {
+      console.error("Read preview error:", err);
+    }
+  }
+  setEditorMode("code");
+  codeArea?.focus();
+}
+
+// Shows the rendered note, using the latest markdown from the code pane. //
+function showPreviewView() {
+  const markdown = codeArea ? codeArea.value : "";
+  setEditorMode("preview");
+  clearPreviewSync();
+  applyCodeToPreview(markdown);
+}
+
+// Preview edits update the code pane. Code-pane edits are applied separately. //
+function onEditorContentChange(markdown) {
+  if (codeToPreviewDepth > 0) return;
+  if (codeArea && document.activeElement === codeArea) return;
+
+  setCodeSource(markdown);
+  updateNoteContent(markdown);
 }
 
 // Reveals the guest-mode banner when notes are stored only for the current session. //
@@ -475,6 +616,7 @@ async function loadNotes() {
     if (notes.length === 0) {
       currentNoteId = null;
       noteTitle.value = "";
+      if (codeArea) codeArea.value = "";
       createEditor("");
       noNotesSpace.style.display = "flex";
       if (textDiv) textDiv.style.display = "none";
@@ -500,10 +642,15 @@ function openNote(activenote) {
 
   noNotesSpace.style.display = "none";
   if (textDiv) textDiv.style.display = "flex";
+  setEditorMode(editorMode);
 
   currentNoteId = activenote.id;
   noteTitle.value = activenote.title || "";
   const normalized = normalizeNoteContent(activenote.content || "");
+  if (codeArea) {
+    codeArea.value = normalized;
+    codeArea.scrollTop = 0;
+  }
   if (normalized !== (activenote.content || "")) {
     activenote.content = normalized;
     saveNoteToDB();
@@ -638,6 +785,7 @@ async function performDelete() {
     if (notes.length === 0) {
       currentNoteId = null;
       noteTitle.value = "";
+      if (codeArea) codeArea.value = "";
       createEditor("");
       noNotesSpace.style.display = "flex";
       if (textDiv) textDiv.style.display = "none";
@@ -748,12 +896,19 @@ noteTitle.addEventListener("input", () => {
   saveTimeout = setTimeout(saveNoteToDB, 200);
 });
 
-// Enter or ArrowDown from the title field moves focus to the start of the editor body.
+// Enter or ArrowDown from the title field moves into the surface that is currently open.
 noteTitle.addEventListener("keydown", (e) => {
   if (e.key !== "Enter" && e.key !== "ArrowDown") return;
   e.preventDefault();
-  if (!milkdownEditor) return;
 
+  if (editorMode === "code") {
+    if (!codeArea) return;
+    codeArea.focus();
+    codeArea.setSelectionRange(0, 0);
+    return;
+  }
+
+  if (!milkdownEditor) return;
   milkdownEditor.action((ctx) => {
     const view = ctx.get(editorViewCtx);
     const selection = TextSelection.atStart(view.state.doc);
@@ -761,6 +916,41 @@ noteTitle.addEventListener("keydown", (e) => {
     view.focus();
   });
 });
+
+// Code and Preview stay visible; the highlighted button is the open surface.
+if (codeViewBtn) {
+  codeViewBtn.addEventListener("click", () => {
+    if (currentNoteId == null || editorMode === "code") return;
+    showCodeView();
+    codeViewBtn.blur();
+  });
+}
+
+if (previewViewBtn) {
+  previewViewBtn.addEventListener("click", () => {
+    if (currentNoteId == null || editorMode === "preview") return;
+    showPreviewView();
+    previewViewBtn.blur();
+  });
+}
+
+// Typing in the code pane updates the stored markdown and the preview.
+if (codeArea) {
+  codeArea.addEventListener("input", () => {
+    updateNoteContent(codeArea.value);
+    schedulePreviewSync(codeArea.value);
+  });
+}
+
+// Backspace or ArrowUp at the start of the code pane returns focus to the title.
+if (codeArea) {
+  codeArea.addEventListener("keydown", (e) => {
+    if (e.key !== "Backspace" && e.key !== "ArrowUp") return;
+    if (codeArea.selectionStart !== 0 || codeArea.selectionEnd !== 0) return;
+    e.preventDefault();
+    noteTitle.focus();
+  });
+}
 
 // True when the caret is at the start of the first block in the document,
 // not merely when earlier blocks are empty (DOM toString skips those).

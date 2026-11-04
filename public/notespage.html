@@ -83,10 +83,25 @@
         <!-- Empty-state prompt; selecting it creates a new note. -->
         <div class="no-notes-space" id="noNotesSpace">Click to Create a New Note</div>
         
-        <!-- Title field and Milkdown text area for the note body. -->
+        <!-- Title plus either the markdown source or the rendered preview. -->
         <div class="text-div">
-          <input class="note-title" id="noteTitle" placeholder="Note Title..." />
-          <div class="text-area" id="textArea"></div>
+          <div class="title-row">
+            <input class="note-title" id="noteTitle" placeholder="Note Title..." />
+            <div class="view-toggle" role="group" aria-label="Editor view">
+              <button type="button" class="view-toggle-btn is-active" id="previewViewBtn" aria-pressed="true">Note</button>
+              <button type="button" class="view-toggle-btn" id="codeViewBtn" aria-pressed="false">Markdown</button>
+            </div>
+          </div>
+          <textarea
+            class="code-area"
+            id="codeArea"
+            aria-label="Code"
+            spellcheck="false"
+            autocomplete="off"
+            autocapitalize="off"
+            placeholder="Write markdown..."
+          ></textarea>
+          <div class="text-area" id="textArea" aria-label="Preview"></div>
         </div>    
     </section>
   </main>
