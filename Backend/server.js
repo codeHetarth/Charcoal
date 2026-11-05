@@ -3,6 +3,7 @@ require("dotenv").config({ path: path.join(__dirname, ".env") });
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
+const PgSession = require("connect-pg-simple")(session);
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const { Pool } = require("pg");
@@ -201,7 +202,26 @@ if (!process.env.SESSION_SECRET) {
   console.warn("SESSION_SECRET is not set. Using a development-only default. Set SESSION_SECRET before deploying.");
 }
 
-const sessionStore = new session.MemoryStore();
+// -------------------- DATABASE --------------------
+const pool = new Pool({
+  user: process.env.PGUSER,
+  host: process.env.PGHOST,
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+  port: Number(process.env.PGPORT) || 5432,
+});
+
+pool
+  .query("SELECT 1")
+  .then(() => console.log("✅ PostgreSQL connected"))
+  .catch((err) => console.error("❌ PostgreSQL connection error:", err.message));
+
+// Guest cookies have no expiry date, so their rows fall back to this TTL (seconds).
+const sessionStore = new PgSession({
+  pool,
+  tableName: "session",
+  ttl: GUEST_SESSION_MS / 1000,
+});
 const cookieBase = {
   httpOnly: true,
   sameSite: "lax",
@@ -224,37 +244,26 @@ app.use(
   })
 );
 
-// MemoryStore only drops a session when its cookie expiry has passed. Guest
-// cookies stay browser-session cookies, so sweep them on our own deadline.
+// The store's TTL is refreshed by any request, so also enforce the guest
+// deadline that only note activity extends.
 setInterval(() => {
-  sessionStore.all((err, sessions) => {
-    if (err || !sessions) return;
-    const now = Date.now();
-    for (const [sid, data] of Object.entries(sessions)) {
-      if (data && data.guestExpiresAt && data.guestExpiresAt <= now) {
-        sessionStore.destroy(sid, () => {});
-      }
-    }
-  });
+  pool
+    .query(
+      `DELETE FROM "session" WHERE (sess->>'guestExpiresAt')::bigint <= $1`,
+      [Date.now()]
+    )
+    .catch((err) => console.error("Guest session cleanup failed:", err.message));
 }, 15 * 60 * 1000).unref();
 
-function destroySessionsForUser(userId, exceptSid) {
-  return new Promise((resolve) => {
-    sessionStore.all((err, sessions) => {
-      if (err || !sessions) return resolve();
-      const ids = Object.entries(sessions)
-        .filter(([sid, data]) => data && data.userId === userId && sid !== exceptSid)
-        .map(([sid]) => sid);
-      if (ids.length === 0) return resolve();
-      let left = ids.length;
-      ids.forEach((sid) => {
-        sessionStore.destroy(sid, () => {
-          left -= 1;
-          if (left === 0) resolve();
-        });
-      });
-    });
-  });
+async function destroySessionsForUser(userId, exceptSid) {
+  try {
+    await pool.query(
+      `DELETE FROM "session" WHERE sess->>'userId' = $1 AND sid IS DISTINCT FROM $2`,
+      [String(userId), exceptSid ?? null]
+    );
+  } catch (err) {
+    console.error("Failed to destroy user sessions:", err.message);
+  }
 }
 
 function isLoggedIn(req) {
@@ -305,21 +314,15 @@ function sortGuestNotesNewestFirst(notes) {
   return [...notes].sort((a, b) => a.id - b.id);
 }
 
-// -------------------- DATABASE --------------------
-const pool = new Pool({
-  user: process.env.PGUSER,
-  host: process.env.PGHOST,
-  database: process.env.PGDATABASE,
-  password: process.env.PGPASSWORD,
-  port: Number(process.env.PGPORT) || 5432,
-});
-
-pool
-  .query("SELECT 1")
-  .then(() => console.log("✅ PostgreSQL connected"))
-  .catch((err) => console.error("❌ PostgreSQL connection error:", err.message));
-
 async function migrate() {
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS "session" (
+      sid VARCHAR PRIMARY KEY,
+      sess JSON NOT NULL,
+      expire TIMESTAMP(6) NOT NULL
+    )
+  `);
+  await pool.query(`CREATE INDEX IF NOT EXISTS "IDX_session_expire" ON "session" (expire)`);
   await pool.query("ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified BOOLEAN");
   await pool.query("UPDATE users SET email_verified = TRUE WHERE email_verified IS NULL");
   await pool.query("ALTER TABLE users ALTER COLUMN email_verified SET DEFAULT FALSE");
