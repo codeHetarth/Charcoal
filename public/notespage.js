@@ -9,6 +9,7 @@ import { history } from "@milkdown/plugin-history";
 import { clipboard } from "@milkdown/plugin-clipboard";
 import { $prose, getMarkdown, replaceAll } from "@milkdown/utils";
 import { Plugin, PluginKey, TextSelection } from "@milkdown/prose/state";
+import { Decoration, DecorationSet } from "@milkdown/prose/view";
 
 
 // References for the sidebar, editor surface, deletion dialogue, and mobile drawer.
@@ -300,6 +301,37 @@ const nonInclusiveLink = linkSchema.extendSchema((prev) => (ctx) => ({
 }));
 
 /**
+ * Shows "Start Writing..." while the preview is a single empty paragraph.
+ * The mount is a div, so the HTML placeholder attribute never appears.
+ */
+const placeholderPlugin = $prose(() => {
+  return new Plugin({
+    key: new PluginKey("CHARCOAL_PLACEHOLDER"),
+    props: {
+      decorations(state) {
+        const doc = state.doc;
+        const first = doc.firstChild;
+        if (
+          doc.childCount !== 1 ||
+          !first ||
+          !first.isTextblock ||
+          first.content.size !== 0
+        ) {
+          return DecorationSet.empty;
+        }
+
+        return DecorationSet.create(doc, [
+          Decoration.node(0, first.nodeSize, {
+            class: "is-editor-empty",
+            "data-placeholder": "Start Writing..."
+          })
+        ]);
+      }
+    }
+  });
+});
+
+/**
  * ProseMirror plugin that (a) converts markdown links after edits, (b) unwraps
  * empty code fences, (c) treats pasted URLs as links, and (d) allows the typing cursor
  * to leave a link or code block via keyboard navigation.
@@ -460,6 +492,7 @@ async function createEditor(content) {
       .use(clipboard)
       .use(linkBehaviorPlugin)
       .use(listener)
+      .use(placeholderPlugin)
       .create();
 
     milkdownEditor.action((ctx) => {
@@ -942,10 +975,11 @@ if (codeArea) {
   });
 }
 
-// Backspace or ArrowUp at the start of the code pane returns focus to the title.
+// ArrowUp at the start of the code pane returns focus to the title.
+// Backspace only deletes text.
 if (codeArea) {
   codeArea.addEventListener("keydown", (e) => {
-    if (e.key !== "Backspace" && e.key !== "ArrowUp") return;
+    if (e.key !== "ArrowUp") return;
     if (codeArea.selectionStart !== 0 || codeArea.selectionEnd !== 0) return;
     e.preventDefault();
     noteTitle.focus();
@@ -969,10 +1003,10 @@ function hasHeadingCommand(state) {
   );
 }
 
-// Backspace or ArrowUp at the start of the first line returns focus to the title.
-// Use capture so a heading is still detected before Milkdown unwraps it on Backspace.
+// ArrowUp at the start of the first line returns focus to the title.
+// Backspace only deletes text. Capture runs before Milkdown turns a heading into a paragraph.
 textAreaMount.addEventListener("keydown", (e) => {
-  if (e.key !== "Backspace" && e.key !== "ArrowUp") return;
+  if (e.key !== "ArrowUp") return;
   if (!milkdownEditor) return;
 
   let leaveToTitle = false;

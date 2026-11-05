@@ -309,6 +309,15 @@ body {
   color: #666666;
 }
 
+/* Empty-note hint inside the Milkdown preview. */
+.text-area .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: #666666;
+}
+
 .text-area {
   padding: 8px 0 24px;
   font-family: Arial;
