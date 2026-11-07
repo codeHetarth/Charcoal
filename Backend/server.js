@@ -74,11 +74,11 @@ function passwordPolicyError(password, { email = "", name = "" } = {}) {
   return null;
 }
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 function emailDeliveryEnabled() {
   return Boolean(process.env.RESEND_API_KEY);
 }
+
+const resend = emailDeliveryEnabled() ? new Resend(process.env.RESEND_API_KEY) : null;
 
 function appBaseUrl() {
   const configured = (process.env.APP_BASE_URL || "").trim().replace(/\/$/, "");
@@ -139,6 +139,11 @@ function claimEmailSend(address) {
 }
 
 async function sendHtmlEmail({ to, subject, html }) {
+  if (!resend) {
+    const err = new Error("Email delivery is not configured");
+    err.code = "EMAIL_DISABLED";
+    throw err;
+  }
   if (!claimEmailSend(to)) {
     const err = new Error("Too many emails to this address");
     err.code = "EMAIL_RATE_LIMIT";
@@ -194,12 +199,9 @@ app.use((req, res, next) => {
   next();
 });
 
-if (isProduction && !process.env.SESSION_SECRET) {
-  console.error("SESSION_SECRET must be set when NODE_ENV=production.");
-  process.exit(1);
-}
 if (!process.env.SESSION_SECRET) {
-  console.warn("SESSION_SECRET is not set. Using a development-only default. Set SESSION_SECRET before deploying.");
+  console.error("SESSION_SECRET must be set. Add it to Backend/.env before starting the server.");
+  process.exit(1);
 }
 
 // -------------------- DATABASE --------------------
@@ -234,7 +236,7 @@ app.set("trust proxy", 1);
 app.use(
   session({
     store: sessionStore,
-    secret: process.env.SESSION_SECRET || "charcoal-dev-secret-change-in-production",
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -439,18 +441,20 @@ app.post("/auth/register", authWriteLimit, async (req, res) => {
     await establishLogin(req, user);
     res.json(user);
 
-    try {
-      const emailResult = await sendHtmlEmail({
-        to: user.email,
-        subject: "Welcome to Charcoal — your account is ready",
-        html: `
+    if (emailDeliveryEnabled()) {
+      try {
+        const emailResult = await sendHtmlEmail({
+          to: user.email,
+          subject: "Welcome to Charcoal — your account is ready",
+          html: `
           <h2>Welcome, ${escapeHtml(user.name)}!</h2>
           <p>Your Charcoal account (<strong>${escapeHtml(user.email)}</strong>) has been created successfully.</p>
         `,
-      });
-      console.log("Registration email sent:", emailResult);
-    } catch (err) {
-      console.error("Registration email failed:", err.message);
+        });
+        console.log("Registration email sent:", emailResult);
+      } catch (err) {
+        console.error("Registration email failed:", err.message);
+      }
     }
   } catch (err) {
     if (err.code === "23505") {
@@ -1068,24 +1072,34 @@ app.get("/verify-email", async (req, res) => {
 
 // -------------------- START SERVER --------------------
 
-migrate()
-  .catch((err) => console.error("Database migration failed:", err.message))
-  .finally(() => {
-const server = app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-  console.log(`   Open http://localhost:${PORT}/ (serves pages from ${publicRoot})`);
-});
+function start() {
+  return migrate()
+    .catch((err) => console.error("Database migration failed:", err.message))
+    .then(() => {
+      const server = app.listen(PORT, () => {
+        console.log(`Server running at http://localhost:${PORT}`);
+        console.log(`   Open http://localhost:${PORT}/ (serves pages from ${publicRoot})`);
+      });
 
-server.on("error", (err) => {
-  if (err.code === "EADDRINUSE") {
-    console.error(
-      `Port ${PORT} is already in use. Another app (or an old node process) is using it.\n` +
-        `  Fix: quit that process, or start this server on another port:\n` +
-        `  PORT=3010 node server.js`
-    );
-  } else {
-    console.error("Server error:", err);
-  }
-  process.exit(1);
-});
-});
+      server.on("error", (err) => {
+        if (err.code === "EADDRINUSE") {
+          console.error(
+            `Port ${PORT} is already in use. Another app (or an old node process) is using it.\n` +
+              `  Fix: quit that process, or start this server on another port:\n` +
+              `  PORT=3010 node server.js`
+          );
+        } else {
+          console.error("Server error:", err);
+        }
+        process.exit(1);
+      });
+
+      return server;
+    });
+}
+
+if (require.main === module) {
+  start();
+}
+
+module.exports = { app, migrate, pool };

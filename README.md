@@ -34,6 +34,7 @@ Charcoal/
 │   ├── server.js          # HTTP API and static file server
 │   ├── schema.sql         # reference dump of the account tables
 │   ├── package.json
+│   ├── test/api.test.js   # registration, login, notes, password reset
 │   └── .env.example       # copy to .env
 ├── public/                # pages, styles, scripts, images
 └── README.md
@@ -80,7 +81,7 @@ RESEND_API_KEY=
 
 `RESEND_API_KEY` is required for confirmation, welcome, password-reset, email-change, and account-deletion emails. When it is set, a new account cannot sign in until the address is confirmed from the email. If the key is omitted, accounts are created and signed in immediately, and email features are skipped.
 
-`SESSION_SECRET` must be set when `NODE_ENV=production`. Optional `APP_BASE_URL` (for example `https://notes.example.com`) is used in email links. When it is omitted, links use `http://localhost:<PORT>`.
+`SESSION_SECRET` is required. The server exits if it is missing. Optional `APP_BASE_URL` (for example `https://notes.example.com`) is used in email links. When it is omitted, links use `http://localhost:<PORT>`.
 
 Guest notes are stored in the session row. The cookie ends when the browser closes, and the server deletes the row within 24 hours of the last guest activity. Each guest session is limited to 50 notes and 256 KB. Signed-in notes are limited to 500 per account. A title is limited to 200 characters and a note body to 100,000 characters. A display name is limited to 100 characters.
 
@@ -146,6 +147,16 @@ PORT=3010 node server.js
 ```
 
 The HTML files should not be opened via `file://`. The notes page calls the API over HTTP and therefore depends on the running server. Thereby, running from files will result in failure to process API related operations.
+
+## Tests
+
+From `Backend/`, with PostgreSQL running and `Backend/.env` set up as above:
+
+```bash
+npm test
+```
+
+This runs `node --test` on `Backend/test/api.test.js`. Each test states the request it sends and the status and JSON body it expects, for registration, login, notes, and password reset. The tests use the same database as the app. They create accounts at `@example.com` addresses that start with `charcoal-test-` and delete those accounts when the run finishes. The run turns email delivery off, so a new account is signed in immediately. The password-reset test inserts the same kind of token an email link would carry, because no message is sent.
 
 ## Editor behaviour
 
