@@ -56,8 +56,11 @@
     <h2>About this Website</h2>
     <p>
       Charcoal is a web-based markdown note-taking application developed as a student project
-      for educational and demonstration purposes. It lets users write notes in the browser,
-      manage them in a sidebar, export them as markdown files, use guest mode, or register an account.
+      for educational and demonstration purposes. It lets users write notes in a rendered Note view
+      or a Markdown source view, manage them in a sidebar, export them as markdown files,
+      use guest mode, or register an account.
+      Guest notes are held in the operator’s database only until the browser session ends,
+      and the server deletes them within 24 hours of the last guest activity.
     </p>
     <p>
       The project was developed as part of an academic portfolio for the course
@@ -99,9 +102,12 @@
 
     <h2>Third-Party Components</h2>
     <p>
-      The notes editor uses the Milkdown editor library, loaded in the browser from the esm.sh network.
-      Account-related emails are sent using Resend. Those providers operate their own services
-      and are not operated by IU International University of Applied Sciences.
+      The notes editor uses the Milkdown editor library, loaded in the browser from the esm.sh network
+      when the notes page is opened. Account-related emails, including address confirmation,
+      password reset, and email-change notices, are sent using Resend when that service is configured.
+      Login sessions and temporary guest notes are stored in the operator’s own PostgreSQL database.
+      Those external providers operate their own services and are not operated by
+      IU International University of Applied Sciences.
     </p>
 
     <h2>Copyright</h2>
@@ -125,7 +131,7 @@
       <a href="terms.html">Terms of Service</a>
     </p>
 
-    <p class="last-updated"><b>Last updated: 29 August 2026</b></p>
+    <p class="last-updated"><b>Last updated: 7 November 2026</b></p>
   </main>
 
   <footer class="legal-footer">

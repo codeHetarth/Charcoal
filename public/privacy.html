@@ -37,7 +37,7 @@
 
   <main>
     <h1>Privacy Policy</h1>
-    <p class="last-updated"><b>Last updated: 4 November 2026</b></p>
+    <p class="last-updated"><b>Last updated: 7 November 2026</b></p>
     <p class="language-note">
       <b>
         If this Privacy Policy is translated into another language, the English version will apply
@@ -50,8 +50,8 @@
       Welcome to Charcoal. This Privacy Policy explains how information is collected, used, stored, and protected when you use this web application.
     </p>
     <p>
-      Charcoal is a markdown note-taking web application. You can write notes in the browser, organise them in a sidebar,
-      export them as <code>.md</code> files, try the app as a guest, or create an account so notes are saved to your profile.
+      Charcoal is a markdown note-taking web application. You can write notes in a rendered Note view or in a Markdown source view,
+      organise them in a sidebar, export them as <code>.md</code> files, try the app as a guest, or create an account so notes are saved to your profile.
     </p>
 
     <h2>2. Data Controller</h2>
@@ -75,20 +75,24 @@
     </p>
     <ul>
       <li>Name (shown as your username in Account)</li>
-      <li>Email address</li>
+      <li>Email address, and a pending new email address while an email change is waiting to be confirmed</li>
       <li>Password, stored in a securely hashed form (bcrypt). We never store your password as plain text.</li>
+      <li>Whether the email address has been confirmed, and the time the account was created</li>
       <li>Notes you create (title and markdown content), including any links or other text you type or paste</li>
-      <li>Hashed password-reset tokens and their expiry time, when you request a reset</li>
+      <li>Hashed password-reset tokens and their expiry time, when you request a reset (15 minutes)</li>
+      <li>Hashed email-confirmation tokens and their expiry time (24 hours), including a pending email address when you change your email</li>
       <li>Session information necessary to keep you logged in or to hold guest notes</li>
+      <li>Your IP address, kept only in server memory, to limit repeated sign-in, registration, password-reset, and email attempts</li>
     </ul>
     <p>
-      If you use guest mode without creating an account, your notes are stored temporarily in a session on the server
-      and are associated with your browser session. Guest notes are not saved to a user account. Your browser
-      drops them when it closes, and the server deletes its copy within 24 hours.
+      If you use guest mode without creating an account, your notes are stored temporarily in a session row
+      in the application database and are associated with your browser session. Guest notes are not saved to a user account.
+      The browser drops the session cookie when it closes. Signing in replaces that session, so the guest notes are no longer available.
+      The server deletes the session row within 24 hours of the last guest activity.
     </p>
     <p>
-      If you create an account, your name, email, hashed password, and notes are stored in the application database
-      and are auto-saved as you edit.
+      If you create an account, your name, email, hashed password, confirmation status, and notes are stored in the application database.
+      Notes are auto-saved as you edit, whether you are using the Note view or the Markdown view.
     </p>
     <p>
       We only collect information that is necessary to provide and operate the application's functionality.
@@ -100,7 +104,7 @@
     </p>
     <ul>
       <li><b>Performance of a contract (Art. 6(1)(b)):</b> to create and manage your account, authenticate your login, save and retrieve your notes, and provide account-related features such as password recovery and account deletion.</li>
-      <li><b>Legitimate interests (Art. 6(1)(f)):</b> to maintain, secure, and improve the application, prevent misuse, and protect users and the service.</li>
+      <li><b>Legitimate interests (Art. 6(1)(f)):</b> to maintain, secure, and improve the application, limit repeated requests, prevent misuse, and protect users and the service.</li>
       <li><b>Consent (Art. 6(1)(a)):</b> where you explicitly agree to specific processing, such as accepting these policies during registration. You may withdraw consent at any time where processing is based on consent.</li>
       <li><b>Legal obligation (Art. 6(1)(c)):</b> where we must retain or disclose information to comply with applicable law.</li>
     </ul>
@@ -111,10 +115,12 @@
     </p>
     <ul>
       <li>Create and manage your user account, including updating your name and email</li>
+      <li>Confirm a new email address before it replaces the current one, and notify the current address that a change was requested</li>
       <li>Authenticate your login and keep you signed in</li>
       <li>Save, retrieve, update, and delete your notes</li>
       <li>Let you export a note as a markdown file on your own device (this download happens in your browser)</li>
-      <li>Send transactional emails: an email confirmation when email delivery is configured, a welcome email, a password-reset email, and a confirmation after account deletion</li>
+      <li>Send transactional emails when email delivery is configured: an address confirmation, a welcome email, a password-reset email, an email-change notice, and a confirmation after account deletion</li>
+      <li>Limit repeated authentication, password-reset, and email attempts</li>
       <li>Maintain and improve the functionality of the application</li>
       <li>Protect the security of the application</li>
     </ul>
@@ -124,7 +130,7 @@
 
     <h2>6. Cookies and Session Information</h2>
     <p>
-      Charcoal uses a session cookie to maintain your login session and allow the application to identify your authenticated session.
+      Charcoal uses one session cookie, <code>connect.sid</code>, to maintain your login session and to associate guest notes with your browser.
     </p>
     <p>
       This cookie is essential for the operation and security of the application
@@ -132,9 +138,10 @@
     </p>
     <ul>
       <li><b>Purpose:</b> authentication, session management, and temporary storage of guest-mode notes</li>
-      <li><b>Type:</b> HTTP cookie (httpOnly, sameSite: lax)</li>
-      <li><b>Duration:</b> up to 7 days while you remain logged in. Guest notes end when you close the browser, and the server deletes them within 24 hours</li>
-      <li><b>Provider:</b> Charcoal (first-party cookie)</li>
+      <li><b>Type:</b> first-party HTTP cookie (<code>connect.sid</code>; httpOnly; SameSite=Lax; Secure when the server is running in production)</li>
+      <li><b>Signed-in duration:</b> up to 7 days</li>
+      <li><b>Guest duration:</b> the cookie ends when you close the browser. The server deletes the session row within 24 hours of the last guest activity. Signing in replaces the guest session</li>
+      <li><b>Provider:</b> Charcoal (first-party cookie). The session contents are stored in Charcoal’s own database</li>
     </ul>
     <p>
       Charcoal does not currently use cookies for advertising, personalised marketing, or non-essential tracking.
@@ -142,10 +149,16 @@
 
     <h2>7. Storage of Information</h2>
     <p>
-      User account information and notes for registered users are stored in a PostgreSQL database connected to the application's backend server.
+      User account information, notes for registered users, password-reset tokens, email-confirmation tokens, and session rows (including guest notes) are stored in a PostgreSQL database connected to the application's backend server.
     </p>
     <p>
       Passwords are not stored as plain text. They are securely hashed before being stored.
+      Password-reset and email-confirmation tokens are stored only as hashes.
+      A pending email address is stored with its confirmation token until you confirm it, it expires after 24 hours, or it is replaced.
+    </p>
+    <p>
+      IP addresses used to limit repeated requests, and the times of recent emails to an address, are kept in server memory only.
+      They are not written to the database and are discarded when the time window ends or the server restarts.
     </p>
     <p>
       Data is processed and stored on the server hosting the application.
@@ -163,7 +176,7 @@
     </p>
     <p>
       Charcoal uses <b>Resend</b> as an email delivery service to send transactional emails,
-      including account-confirmation emails, welcome emails, password-reset emails, and account-deletion confirmation emails.
+      including account-confirmation emails, welcome emails, password-reset emails, email-change notices, and account-deletion confirmation emails.
       Information such as your name, email address, and the content necessary to send these emails may be processed by Resend for this purpose.
       Resend may process data in the United States or other countries outside the EEA.
       Where required, such transfers are subject to appropriate safeguards under applicable data protection law.
@@ -188,6 +201,7 @@
     </p>
     <p>
       Passwords are securely hashed before being stored and are never stored as plain text.
+      The session cookie cannot be read by page scripts. Sign-in, registration, and password reset are rate-limited.
     </p>
     <p>
       However, no online system or method of electronic transmission can guarantee complete security.
@@ -223,13 +237,15 @@
       the application's functionality or as required by applicable legal obligations.
     </p>
     <p>
-      When you delete your account from the Account page, your account record and notes are deleted
-      from the database, and your session is ended. A confirmation email may still be sent to the
-      address on the account. Password-reset tokens are stored only until they expire (15 minutes)
-      or are replaced by a new request.
+      When you delete your account from the Account page, your account record, notes, tokens, and sessions are deleted.
+      Deletion requires your current password. A confirmation email may still be sent to the
+      address on the account if that address was confirmed. Password-reset tokens are stored only until they expire (15 minutes)
+      or are replaced by a new request. Email-confirmation tokens, including a pending email address, are stored until they expire (24 hours),
+      are used, or are replaced.
     </p>
     <p>
-      Guest-mode notes are dropped by the browser when you close it, deleted by the server within 24 hours, and also removed when you sign in.
+      Guest-mode notes leave the browser when you close it. Signing in replaces the guest session.
+      The server deletes the guest session row within 24 hours of the last guest activity.
     </p>
 
     <h2>12. Changes to This Privacy Policy</h2>
@@ -247,7 +263,7 @@
       For rules on using the service, see our <a href="terms.html">Terms of Service</a>.
     </p>
 
-    <p class="last-updated"><b>Last updated: 4 November 2026</b></p>
+    <p class="last-updated"><b>Last updated: 7 November 2026</b></p>
   </main>
 
   <footer class="legal-footer">

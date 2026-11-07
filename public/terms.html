@@ -37,7 +37,7 @@
 
   <main>
     <h1>Terms of Service</h1>
-    <p class="last-updated"><b>Last updated: 4 November 2026</b></p>
+    <p class="last-updated"><b>Last updated: 7 November 2026</b></p>
 
     <p>
       Welcome to Charcoal, a web-based markdown note-taking application.
@@ -52,11 +52,18 @@
     <p>
       Charcoal is a web-based markdown note-taking application.
       You can create, edit, auto-save, switch between, delete, and export personal notes as <code>.md</code> files.
-      The editor supports GitHub Flavored Markdown, including tables, task lists, strikethrough, code blocks, and links.
+      The editor has a Note view for the rendered note and a Markdown view for the source.
+      It supports GitHub Flavored Markdown, including tables, task lists, strikethrough, code blocks, and links.
     </p>
     <p>
-      You may use Charcoal as a guest or with an account. Guest notes last until you close the browser, and the server deletes them within 24 hours.
+      You may use Charcoal as a guest or with an account. Guest notes are stored in a server session until you close the browser.
+      Signing in replaces that session. The server deletes leftover guest sessions within 24 hours of the last guest activity.
       Account notes are stored with your profile until you delete them or delete the account.
+    </p>
+    <p>
+      The service may refuse a note that exceeds its limits: 200 characters for a title, 100,000 characters for a note body,
+      50 notes and 256 KB for a guest session, and 500 notes for an account.
+      A display name is limited to 100 characters.
     </p>
     <p>
       The service is intended for personal productivity and note-taking purposes.
@@ -72,12 +79,20 @@
 
     <h2>3. User Accounts</h2>
     <p>
-      Registration is optional. Guest mode lets you write notes without an account; those notes last until
-      you close the browser, and the server deletes them within 24 hours. Signing in removes them as well.
+      Registration is optional. Guest mode lets you write notes without an account. Those notes last until
+      you close the browser, and the server deletes them within 24 hours of the last guest activity. Signing in replaces that session.
     </p>
     <p>
       An account lets you keep notes after you close the browser, update your name and email,
       reset your password by email, and delete your account and notes from the Account page.
+      When email delivery is configured, you must confirm your address before you can sign in.
+      Confirmation links expire after 24 hours. Changing your email requires your current password and is applied
+      only after you confirm the new address. The current address is notified of that request.
+      Deleting the account requires your current password.
+    </p>
+    <p>
+      Passwords must be 8 to 128 characters, must not contain your name or email, and must not be a common password.
+      A new password must be different from the current one.
     </p>
     <p>
       When creating an account, you agree to:
@@ -100,7 +115,7 @@
     <p>
       By using the service, you give Charcoal the limited permission needed
       to store, display, and process your content so that the note-taking service can work
-      (including auto-save and, for guests, temporary session storage).
+      (including auto-save from the Note view and the Markdown view and, for guests, temporary session storage in the application database).
     </p>
     <p>
       Charcoal does not claim ownership of your personal notes.
@@ -129,7 +144,8 @@
     <p>
       You are responsible for keeping backup copies of important notes and information.
       You can download a note as a markdown file with Export Note.
-      Guest notes are not kept after you close the browser. The server deletes its copy within 24 hours.
+      Guest notes are not kept after you close the browser. The server deletes the session row within 24 hours of the last guest activity.
+      Notes that exceed the limits in section 1 are not saved.
     </p>
     <p>
       To the extent permitted by law, Charcoal is not responsible for data loss caused by circumstances
@@ -144,7 +160,7 @@
       <li>Attempt to gain unauthorized access to the website or another user's account.</li>
       <li>Interfere with or disrupt the operation of the service.</li>
       <li>Upload viruses, malware, or other harmful software.</li>
-      <li>Attempt to bypass security measures.</li>
+      <li>Attempt to bypass security measures, storage limits, or request limits.</li>
       <li>Misuse the service.</li>
       <li>Use the service for unlawful purposes.</li>
       <li>Copy, modify, reverse engineer, or exploit the website without permission, except where permitted by law.</li>
@@ -186,7 +202,8 @@
     </p>
     <p>
       The Privacy Policy explains how personal information and other data are collected, used, stored, and protected,
-      including session cookies, guest notes, account notes, transactional emails sent through Resend,
+      including the session cookie, guest notes stored in the application database, account notes,
+      transactional emails sent through Resend (including address confirmation and email-change notices),
       and editor scripts loaded from a third-party network when you open the notes page.
     </p>
     <p>
@@ -200,7 +217,7 @@
     </p>
     <p>
       You may also delete your account using Delete Account on the Account page.
-      That action permanently deletes your account and notes and cannot be undone.
+      That action requires your current password, permanently deletes your account, notes, and sessions, and cannot be undone.
       You may also contact us at <a href="mailto:support@yourwebsite.com">support@yourwebsite.com</a>.
     </p>
     <p>
@@ -266,7 +283,7 @@
       For provider details, see our <a href="legal.html">Legal Notice</a>.
     </p>
 
-    <p class="last-updated"><b>Last updated: 4 November 2026</b></p>
+    <p class="last-updated"><b>Last updated: 7 November 2026</b></p>
   </main>
 
   <footer class="legal-footer">
