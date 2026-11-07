@@ -52,7 +52,7 @@ Routes (older `*.html` paths redirect to these):
 ## Requirements
 
 - Node.js 18 or later
-- PostgreSQL running locally
+- PostgreSQL running locally, or Docker to start the database container below
 
 ## Setup
 
@@ -84,7 +84,18 @@ RESEND_API_KEY=
 
 Guest notes are stored in the session row. The cookie ends when the browser closes, and the server deletes the row within 24 hours of the last guest activity. Each guest session is limited to 50 notes and 256 KB. Signed-in notes are limited to 500 per account. A title is limited to 200 characters and a note body to 100,000 characters. A display name is limited to 100 characters.
 
-In PostgreSQL:
+Start PostgreSQL with Docker if it is not already running. Use the same user, password, database name, and port as `Backend/.env`. This creates `charcoalnotesapp`, so skip the `CREATE DATABASE` statement when you use this container. If a container named `charcoal-db` already exists, start it with `docker start charcoal-db` instead of `docker run`.
+
+```bash
+docker run --name charcoal-db -d \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=your_postgres_password \
+  -e POSTGRES_DB=charcoalnotesapp \
+  -p 5432:5432 \
+  postgres
+```
+
+For a PostgreSQL install without that database:
 
 ```sql
 CREATE DATABASE charcoalnotesapp;
