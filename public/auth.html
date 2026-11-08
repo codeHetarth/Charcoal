@@ -79,6 +79,15 @@
                 <p>Already have an account? <a href="/auth/login" id="show-login">Login</a></p>
             </div>
         </div>
+
+        <!-- Message view: replaces the forms after sign-up and after an email confirmation link. -->
+        <div id="messageView" class="auth-view auth-message hidden" role="status">
+            <h1 id="message-title"></h1>
+            <p id="message-text"></p>
+            <div class="auth-div3">
+                <a href="/auth/login" id="message-link"></a>
+            </div>
+        </div>
     </section>
 
     <script src="password-policy.js"></script>

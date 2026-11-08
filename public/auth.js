@@ -1,17 +1,32 @@
 // References for the two mutually exclusive authentication views.
 const loginView = document.getElementById("loginView");
 const registerView = document.getElementById("registerView");
+const messageView = document.getElementById("messageView");
 
 // Presents the login view and hides registration. //
 function showLogin() {
     loginView.classList.remove("hidden");
     registerView.classList.add("hidden");
+    messageView.classList.add("hidden");
 }
 
 // Presents the registration view and hides login. //
 function showRegister() {
     loginView.classList.add("hidden");
     registerView.classList.remove("hidden");
+    messageView.classList.add("hidden");
+}
+
+// Replaces both forms with a message and a link back to login. //
+function showMessage(title, text, linkText) {
+    clearAuthError();
+    clearAuthNotice();
+    document.getElementById("message-title").textContent = title;
+    document.getElementById("message-text").textContent = text;
+    document.getElementById("message-link").textContent = linkText;
+    loginView.classList.add("hidden");
+    registerView.classList.add("hidden");
+    messageView.classList.remove("hidden");
 }
 
 function showAuthFromPath() {
@@ -36,6 +51,12 @@ document.getElementById("show-register").addEventListener("click", (e) => {
     window.history.pushState(null, "", "/auth/register");
 });
 
+document.getElementById("message-link").addEventListener("click", (e) => {
+    e.preventDefault();
+    showLogin();
+    window.history.pushState(null, "", "/auth/login");
+});
+
 showAuthFromPath();
 window.addEventListener("popstate", showAuthFromPath);
 
@@ -50,13 +71,6 @@ fetch("/auth/me", { credentials: "include" })
 
 const authError = document.getElementById("auth-error");
 const authNotice = document.getElementById("auth-notice");
-
-const verifiedMessages = {
-    "1": "Email confirmed. You can sign in.",
-    email: "Email updated. Sign in with your new email address.",
-    invalid: "This confirmation link is invalid or has expired.",
-    taken: "That email address is already in use.",
-};
 
 // Displays a server- or client-side error within the shared alert region. //
 function showAuthError(message) {
@@ -84,11 +98,17 @@ function clearAuthNotice() {
     authNotice.classList.add("hidden");
 }
 
+// Outcomes of the emailed confirmation link, passed back by /verify-email.
+const verifiedMessages = {
+    "1": ["Email confirmed", "Your email has been confirmed. You can sign in.", "Sign in"],
+    email: ["Email updated", "Your email has been changed. Sign in with your new email address.", "Sign in"],
+    invalid: ["Link expired", "This confirmation link is invalid or has expired.", "Back to Login"],
+    taken: ["Email in use", "That email address is already in use.", "Back to Login"],
+};
+
 const verified = new URLSearchParams(window.location.search).get("verified");
-if (verified === "1" || verified === "email") {
-    showAuthNotice(verifiedMessages[verified]);
-} else if (verifiedMessages[verified]) {
-    showAuthError(verifiedMessages[verified]);
+if (verifiedMessages[verified]) {
+    showMessage(...verifiedMessages[verified]);
 }
 
 /**
@@ -157,7 +177,11 @@ document.getElementById("register-form").addEventListener("submit", async (e) =>
             password,
         });
         if (created.needsVerification) {
-            showAuthNotice("Check your email to confirm your account. The link expires in 24 hours.");
+            showMessage(
+                "Confirm your email",
+                "A confirmation link has been sent to your email. Confirm your email to sign in. The link expires in 24 hours.",
+                "Back to Login"
+            );
             return;
         }
         window.location.href = "/notespage.html";

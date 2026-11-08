@@ -150,6 +150,23 @@ body {
   font-size: 14px;
 }
 
+/* Message card shown in place of the forms (email sent, confirmed, or link expired). */
+.auth-message {
+    text-align: center;
+    margin: 60px 20px;
+}
+
+.auth-message h1 {
+    margin-bottom: 50px;
+}
+
+.auth-message p {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 2.0;
+    margin-bottom: 80px;
+}
+
 /* Conceals the inactive login or registration view. */
 .auth-view.hidden {
     display: none;
